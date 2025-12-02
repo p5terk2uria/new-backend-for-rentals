@@ -32,3 +32,8 @@ spring:
   jwt:
     secret-key: "Gv7kR2t0eJ0mQyqB1T8Vw3C4Z9lFh2rPp8bK0sXq7Jt4Wm9eD3Fq6Yv1Nn5Rc8Zd"
     expiration: 3600000
+
+  videos:
+    folder: ./house-videos
+    base-url: http://localhost:8080/videos/
+

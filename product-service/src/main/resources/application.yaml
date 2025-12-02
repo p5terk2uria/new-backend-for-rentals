@@ -28,3 +28,13 @@ spring:
           lob:
             non_contextual_creation:true
     open-in-view: false
+
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+
+
+videos:
+      folder: ./house-videos
+      base-url: http://localhost:8333/videos/

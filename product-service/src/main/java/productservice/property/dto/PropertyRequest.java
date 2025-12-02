@@ -3,8 +3,6 @@ package productservice.property.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import jdk.jfr.Description;
-import productservice.property.entities.PropertyAmenities;
-import productservice.property.entities.PropertyBills;
 import productservice.property.enums.AmenityType;
 import productservice.property.enums.HouseType;
 
