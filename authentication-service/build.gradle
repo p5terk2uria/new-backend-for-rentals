@@ -39,7 +39,11 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
+    // https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations
+    implementation("io.swagger.core.v3:swagger-annotations:2.2.38")
+
+    // https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
+    implementation("io.springfox:springfox-swagger-ui:3.0.0")
 
     // https://mvnrepository.com/artifact/de.mkammerer/argon2-jvm
     implementation("de.mkammerer:argon2-jvm:2.1")
