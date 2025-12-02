@@ -3,7 +3,6 @@ package authentication_service.user.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -21,7 +20,7 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // Disable CSRF for REST APIs
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable())
 
                 // Permit some endpoints, require auth for others
                 .authorizeHttpRequests(auth -> auth
@@ -35,7 +34,7 @@ public class WebSecurityConfig {
                 )
 
                 // Disable default HTTP Basic login
-                .httpBasic(AbstractHttpConfigurer::disable);
+                .httpBasic(httpBasic -> httpBasic.disable());
 
         return http.build();
     }

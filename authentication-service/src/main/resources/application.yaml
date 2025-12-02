@@ -6,34 +6,27 @@ spring:
     name: authentication-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/vcbinternetbankingdb
-    username: admin
-    password: admin@123
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://localhost:3306/authdb
+    username: root
+    password: peter
+    driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 180000
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-        jdbc:
-          lob:
-            non_contextual_creation:true
     open-in-view: false
 
   jwt:
     secret-key: "Gv7kR2t0eJ0mQyqB1T8Vw3C4Z9lFh2rPp8bK0sXq7Jt4Wm9eD3Fq6Yv1Nn5Rc8Zd"
     expiration: 3600000
-
-  videos:
-    folder: ./house-videos
-    base-url: http://localhost:8080/videos/
-
