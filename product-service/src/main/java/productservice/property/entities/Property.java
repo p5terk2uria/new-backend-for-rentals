@@ -27,6 +27,8 @@ public class Property {
 
     private String propertyLocation;
 
+    private String houseDescription;
+
     @Enumerated(EnumType.STRING)
     private HouseType houseType;
 
