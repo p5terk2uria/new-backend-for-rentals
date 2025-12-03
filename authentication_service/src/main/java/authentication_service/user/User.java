@@ -26,6 +26,7 @@ public class User {
     @Column(unique = true)
     private String phoneNumber;
 
+    @Enumerated(value = EnumType.STRING)
     private DomainRoles role;
 
     @Column(nullable = false)

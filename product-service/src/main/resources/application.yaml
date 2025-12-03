@@ -6,7 +6,7 @@ spring:
     name: product-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/HouseListings
+    url: jdbc:mysql://localhost:3306/HouseListings?useSSL=false&serverTimezone=UTC
     username: root
     password: peter
     driver-class-name: com.mysql.cj.jdbc.Driver

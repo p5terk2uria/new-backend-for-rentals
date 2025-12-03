@@ -1,10 +1,12 @@
 package authentication_service.user;
 
+import java.util.HashMap;
+import java.util.Map;
 
 import authentication_service.user.dto.LoginRequest;
 import authentication_service.user.dto.LoginResponse;
 import authentication_service.user.dto.RegisterRequest;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,16 +24,19 @@ public class UserManagementController {
     private final UserManagementService userManagementService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request) {
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody RegisterRequest request) {
         userManagementService.registerUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("User registered successfully");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User registered successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login (@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         LoginResponse response = userManagementService.login(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
+
 }
