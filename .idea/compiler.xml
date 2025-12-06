@@ -9,16 +9,12 @@
         </processorPath>
         <module name="StockManager.notification-service.main" />
         <module name="StockManager.product-service.main" />
-        <module name="StockManager.authentication-service.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="21" />
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="StockManager.authentication-service" options="-parameters" />
-      <module name="StockManager.authentication-service.main" options="-parameters" />
-      <module name="StockManager.authentication-service.test" options="-parameters" />
       <module name="StockManager.notification-service" options="-parameters" />
       <module name="StockManager.notification-service.main" options="-parameters" />
       <module name="StockManager.notification-service.test" options="-parameters" />

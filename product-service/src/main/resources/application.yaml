@@ -37,3 +37,5 @@ spring:
 
 videos:
   folder: videos
+  base-url: http://localhost:8333/videos/
+
