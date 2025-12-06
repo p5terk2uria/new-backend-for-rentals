@@ -1,16 +1,21 @@
 package productservice.property.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import productservice.config.VideoConfig;
 import productservice.mapper.PropertyMapper;
 import productservice.property.dto.BillsRequest;
 import productservice.property.dto.PropertyRequest;
+import productservice.property.dto.PropertyResponse;
+import productservice.property.dto.PropertySearchRequest;
 import productservice.property.entities.Property;
 import productservice.property.enums.AmenityType;
 import productservice.property.repository.AmenitiesRepository;
 import productservice.property.repository.BillsRepository;
 import productservice.property.repository.PropertyRepository;
+import productservice.specifications.PropertySpecification;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,6 +43,20 @@ public class PropertyServiceImpl implements PropertyService {
         var savedProperty = propertyRepository.save(property);
         createAmenities(propertyRequest.amenities(), savedProperty);
         createPropertyBills(propertyRequest.bills(), savedProperty);
+    }
+
+    @Override
+    public Page<PropertyResponse> searchProperty(PropertySearchRequest request, Pageable pageable) {
+
+        var spec = PropertySpecification.searchProperty(request);
+
+        return propertyRepository.findAll(spec,pageable)
+                .map(property -> {
+                    var bills = billsRepository.findAllByPropertyId(property.getId());
+                    var amenities = amenitiesRepository.findByPropertyId(property.getId());
+
+                    return propertyMapper.toResponse(property, bills, amenities);
+                });
     }
 
 

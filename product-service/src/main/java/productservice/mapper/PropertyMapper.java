@@ -3,6 +3,7 @@ package productservice.mapper;
 import org.springframework.stereotype.Component;
 import productservice.property.dto.BillsRequest;
 import productservice.property.dto.PropertyRequest;
+import productservice.property.dto.PropertyResponse;
 import productservice.property.entities.Property;
 import productservice.property.entities.PropertyAmenities;
 import productservice.property.entities.PropertyBills;
@@ -46,6 +47,37 @@ public class PropertyMapper {
                         .otherBills(bill.otherBills())
                         .build())
                 .collect(Collectors.toSet());
+
+    }
+
+    public PropertyResponse toResponse(Property property, Set<PropertyBills> bills,
+                                       Set<PropertyAmenities> amenities) {
+        Set<BillsRequest> billsDto = bills.stream()
+                .map(bill -> new BillsRequest(
+                        bill.getHouseBill(),
+                        bill.getWaterBill(),
+                        bill.getTrashBill(),
+                        bill.getMaintenanceBill(),
+                        bill.getOtherBills()
+
+                )).collect(Collectors.toSet());
+
+        Set<AmenityType> amenitiesDto = amenities.stream()
+                .map(PropertyAmenities::getAmenityType)
+                .collect(Collectors.toSet());
+
+        return new PropertyResponse(
+                property.getId(),
+                property.getOwnerId(),
+                property.getOwnerName(),
+                property.getPropertyName(),
+                property.getOwnerEmail(),
+                property.getPropertyLocation(),
+                property.getHouseType(),
+                property.getVideoLink(),
+                billsDto,
+                amenitiesDto
+        );
 
     }
 

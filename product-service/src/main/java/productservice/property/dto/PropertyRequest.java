@@ -9,7 +9,7 @@ import productservice.property.enums.HouseType;
 import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Description("The request to be used when creating a new property")
+@Description("The request to be used when creating a new searchProperty")
 public record PropertyRequest(
 
         @NotBlank(message = "Owner name cannot be blank")
@@ -24,7 +24,7 @@ public record PropertyRequest(
         @NotBlank(message = "Owner email cannot be empty")
         String ownerEmail,
 
-        @NotBlank(message = "The property location must be disclosed")
+        @NotBlank(message = "The searchProperty location must be disclosed")
         String propertyLocation,
 
         @NotBlank(message = "House type must be specified")
