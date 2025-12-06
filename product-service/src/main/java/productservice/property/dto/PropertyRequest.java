@@ -18,6 +18,7 @@ public record PropertyRequest(
         @NotBlank(message = "OwnerIdCannot be null")
         String ownerId,
 
+        @NotBlank(message = "OwnerIdCannot be null")
         String propertyName,
 
         @NotBlank(message = "Owner email cannot be empty")
@@ -28,6 +29,9 @@ public record PropertyRequest(
 
         @NotBlank(message = "House type must be specified")
         HouseType houseType,
+
+        @NotBlank(message = "HouseDescription type must be specified")
+        String houseDescription,
 
         Set<AmenityType> amenities,
 

@@ -1,4 +1,4 @@
-package productservice.config;
+package authentication_service.user.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +8,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import java.util.Arrays;
 
 @Configuration
 public class WebSecurityConfig {
@@ -16,12 +16,24 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // Enable CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // Disable CSRF for REST APIs
                 .csrf(csrf -> csrf.disable())
+
+                // Permit some endpoints, require auth for others
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/authentication/**", "/v3/api-docs/**", "/swagger-ui/**","/api/vi/property/create").permitAll()
+                        .requestMatchers(
+                                "/authentication/register",
+                                "/authentication/login",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
+
+                // Disable default HTTP Basic login
                 .httpBasic(httpBasic -> httpBasic.disable());
 
         return http.build();
@@ -30,13 +42,15 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:4200")); // allow Angular frontend
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // use wildcard pattern
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true); // important for Angular
+        configuration.setExposedHeaders(Arrays.asList("Authorization")); // optional if you send JWT
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }
