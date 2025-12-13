@@ -19,7 +19,11 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/property/**", "/authentication/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/videos/**").permitAll() // allow video access
+                        .requestMatchers("/api/v1/property/**",
+                                "/authentication/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(httpBasic -> httpBasic.disable());
@@ -30,7 +34,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:4200")); // allow Angular frontend
+        configuration.setAllowedOriginPatterns(List.of("http://localhost:4200")); // allow only your frontend
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

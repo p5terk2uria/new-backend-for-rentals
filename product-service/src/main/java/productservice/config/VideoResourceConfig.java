@@ -22,7 +22,3 @@ public class VideoResourceConfig implements WebMvcConfigurer {
                 .resourceChain(true);
     }
 }
-
-
-
-
