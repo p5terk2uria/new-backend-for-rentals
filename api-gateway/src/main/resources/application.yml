@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      globalcors:
+        '[/**]':
+          allowedOrigins: "http://localhost:3000"
+          allowedMethods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          allowedHeaders: "*"
+          allowedCredentials: true
+          maxAge: 3600
+
+      routes:
+        # Authentication
+        - id: auth-service
+          uri: http://localhost:8331
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - RewritePath=/api/auth/(?<segment>.*), /${segment}
+
+        #Product
+        - id: product-service
+          uri: http://localhost:8333
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - RewritePath=/api/products/(?<segment>.*), /${segment}
+            - AuthenticationFilter
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+gateway:
+  secret: "Gv7kR2t0eJ0mQyqB1T8Vw3C4Z9lFh2rPp8bK0sXq7Jt4Wm9eD3Fq6Yv1Nn5Rc8Zd"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        exclude: health,info,gateway
+  endpoint:
+    gateway:
+      enabled: true
+
+authentication:
+  url: http://localhost:8331/authentication/validate-token

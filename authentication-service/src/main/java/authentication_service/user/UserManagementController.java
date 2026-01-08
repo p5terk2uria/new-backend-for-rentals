@@ -1,0 +1,65 @@
+package authentication_service.user;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import authentication_service.user.dto.*;
+import io.swagger.v3.oas.annotations.Hidden;
+import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+@RestController
+@RequestMapping("api/auth/authentication")
+@RequiredArgsConstructor
+@Tag(name = "User Management Controller")
+public class UserManagementController {
+
+    private final UserManagementService userManagementService;
+
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody RegisterRequest request) {
+        userManagementService.registerUser(request);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User registered successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        LoginResponse response = userManagementService.login(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @GetMapping("/user-by-id")
+    public ResponseEntity<UserData> getUserDataById(@RequestParam String userId){
+        UserData response = userManagementService.findById(userId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @Hidden
+    @GetMapping("/feign/user-by-id")
+    public ResponseEntity<UserData> getUserData(@RequestParam String userId){
+        UserData response = userManagementService.findById(userId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @Hidden
+    @PostMapping("/feign/validate-token")
+    public ResponseEntity<ValidationResponse> validateToken (
+            @RequestHeader("Authorization") String authHeader) {
+        ValidationResponse response = userManagementService.validateToken(authHeader);
+        if(response.valid()) {
+            return ResponseEntity.ok(response);
+        } else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+
+
+}

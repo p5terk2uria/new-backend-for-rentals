@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gateway/StockManager.gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/gateway/StockManager.gateway.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/notification-service/StockManager.notification-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/notification-service/StockManager.notification-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/product-service/StockManager.product-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/product-service/StockManager.product-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api-gateway/api-gateway.iml" filepath="$PROJECT_DIR$/api-gateway/api-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/authentication-service/stock.management.StockManager.authentication-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/authentication-service/stock.management.StockManager.authentication-service.main.iml" />
     </modules>
   </component>
 </project>
