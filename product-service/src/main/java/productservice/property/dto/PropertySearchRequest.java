@@ -36,6 +36,8 @@ public record PropertySearchRequest (
 
         BigDecimal minOtherBills,
 
-        BigDecimal maxOtherBills
+        BigDecimal maxOtherBills,
+
+        Boolean vacantOnly
 ) {
 }

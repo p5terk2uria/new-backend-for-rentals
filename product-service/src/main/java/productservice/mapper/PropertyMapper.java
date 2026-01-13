@@ -1,30 +1,56 @@
 package productservice.mapper;
 
 import org.springframework.stereotype.Component;
-import productservice.property.dto.BillsRequest;
 import productservice.property.dto.PropertyRequest;
 import productservice.property.dto.PropertyResponse;
 import productservice.property.entities.Property;
 import productservice.property.entities.PropertyAmenities;
-import productservice.property.entities.PropertyBills;
+import productservice.property.entities.RoomBills;
 import productservice.property.enums.AmenityType;
-
+import productservice.room.Room;
+import productservice.room.dto.RoomResponse;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 
 @Component
 public class PropertyMapper {
 
-    public Property toPropertyEntity(PropertyRequest request) {
+    public Property toEntity(PropertyRequest request) {
         return Property.builder()
-                .ownerName(request.ownerName())
                 .ownerId(request.ownerId())
-                .propertyName(request.propertyName())
+                .ownerName(request.ownerName())
                 .ownerEmail(request.ownerEmail())
+                .propertyName(request.propertyName())
                 .propertyLocation(request.propertyLocation())
-                .houseType(request.houseType())
                 .houseDescription(request.houseDescription())
                 .build();
+    }
+
+    public RoomResponse toRoomResponse(Room room) {
+        RoomBills bills = room.getRoomBills();
+        return new RoomResponse(
+                room.getId(),
+                room.getHouseType(),
+                room.isVacant(),
+                bills != null ? bills.getHouseBill() : null,
+                bills != null ? bills.getWaterBill() : null,
+                bills != null ? bills.getTrashBill() : null,
+                bills != null ? bills.getMaintenanceBill() : null,
+                bills != null ? bills.getOtherBills() : null,
+                room.getImageUrls()
+        );
+    }
+
+    public PropertyResponse toResponse(Property property, Set<AmenityType> amenities, Set<RoomResponse> rooms) {
+        return new PropertyResponse(
+                property.getId(),
+                property.getPropertyName(),
+                property.getPropertyLocation(),
+                property.getVideoLink(),
+                amenities,
+                rooms
+        );
     }
 
     public Set<PropertyAmenities> toPropertyAmenities(Set<AmenityType> amenityTypes, Property property) {
@@ -34,51 +60,6 @@ public class PropertyMapper {
                         .property(property)
                         .build())
                 .collect(Collectors.toSet());
-    }
-
-    public Set<PropertyBills> toPropertyBills(Set<BillsRequest> requests, Property property) {
-        return requests.stream()
-                .map(bill -> PropertyBills.builder()
-                        .property(property)
-                        .houseBill(bill.houseBill())
-                        .maintenanceBill(bill.maintenanceBill())
-                        .waterBill(bill.waterBill())
-                        .trashBill(bill.trashBill())
-                        .otherBills(bill.otherBills())
-                        .build())
-                .collect(Collectors.toSet());
-
-    }
-
-    public PropertyResponse toResponse(Property property, Set<PropertyBills> bills,
-                                       Set<PropertyAmenities> amenities) {
-        Set<BillsRequest> billsDto = bills.stream()
-                .map(bill -> new BillsRequest(
-                        bill.getHouseBill(),
-                        bill.getWaterBill(),
-                        bill.getTrashBill(),
-                        bill.getMaintenanceBill(),
-                        bill.getOtherBills()
-
-                )).collect(Collectors.toSet());
-
-        Set<AmenityType> amenitiesDto = amenities.stream()
-                .map(PropertyAmenities::getAmenityType)
-                .collect(Collectors.toSet());
-
-        return new PropertyResponse(
-                property.getId(),
-                property.getOwnerId(),
-                property.getOwnerName(),
-                property.getPropertyName(),
-                property.getOwnerEmail(),
-                property.getPropertyLocation(),
-                property.getHouseType(),
-                property.getVideoLink(),
-                billsDto,
-                amenitiesDto
-        );
-
     }
 
 }

@@ -1,5 +1,7 @@
 package authentication_service.user.dto;
 
+import authentication_service.user.enums.DomainRoles;
+
 public record UserData(
 
         String id,
@@ -26,7 +28,9 @@ public record UserData(
         
         String postalCode,
         
-        String zipCode
+        String zipCode,
+
+        DomainRoles role
         
 ) {
     

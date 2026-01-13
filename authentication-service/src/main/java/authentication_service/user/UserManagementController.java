@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @RestController
-@RequestMapping("api/auth/authentication")
+@RequestMapping("/authentication")
 @RequiredArgsConstructor
 @Tag(name = "User Management Controller")
 public class UserManagementController {
@@ -50,7 +50,7 @@ public class UserManagementController {
     }
 
     @Hidden
-    @PostMapping("/feign/validate-token")
+    @PostMapping("/validate-token")
     public ResponseEntity<ValidationResponse> validateToken (
             @RequestHeader("Authorization") String authHeader) {
         ValidationResponse response = userManagementService.validateToken(authHeader);

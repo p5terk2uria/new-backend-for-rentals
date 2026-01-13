@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class VideoResourceConfig implements WebMvcConfigurer {
 
-    @Value("${videos.folder}")
+    @Value("${videos.property.videos}")
     private String videoFolder;
 
     @Override

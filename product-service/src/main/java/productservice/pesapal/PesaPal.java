@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import productservice.bookings.RegisterIPNRequest;
 import productservice.bookings.dto.*;
-import productservice.bookings.externalApIs.PesaPalConfigurations;
+import productservice.externalApIs.PesaPalConfigurations;
 import productservice.payment.dto.InitiatePaymentResponse;
 
 

@@ -2,10 +2,10 @@ package productservice.payment;
 
 import jakarta.persistence.*;
 import lombok.*;
-import productservice.bookings.BookProperty;
+import productservice.bookings.BookRoom;
 import productservice.payment.enums.PaymentReason;
 import productservice.payment.enums.PaymentStatus;
-import productservice.visits.RequestVisit;
+import productservice.visit.RequestVisit;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,7 +39,8 @@ public class PaymentConfirmation {
     private RequestVisit requestVisit;
 
     @OneToOne
-    private BookProperty bookProperty;
+    private BookRoom bookRoom;
+
 
 
 }

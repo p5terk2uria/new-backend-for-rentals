@@ -23,7 +23,8 @@ public class mapper {
                 location != null ? location.getCity() : null,
                 location != null ? location.getState() : null,
                 location != null ? location.getPostalCode() : null,
-                location != null ? location.getZipCode() : null
+                location != null ? location.getZipCode() : null,
+                user.getRole()
         );
     }
 

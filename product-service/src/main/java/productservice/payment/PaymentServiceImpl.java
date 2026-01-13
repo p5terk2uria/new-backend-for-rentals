@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import productservice.bookings.BookRoom;
+import productservice.bookings.BookRoomRepository;
+import productservice.bookings.dto.BookingStatus;
 import productservice.bookings.dto.CustomerAddress;
 import productservice.bookings.dto.PaymentRequest;
 import productservice.bookings.dto.SubmitRequest;
-import productservice.bookings.externalApIs.PesaPalConfigurations;
+import productservice.externalApIs.PesaPalConfigurations;
 import productservice.payment.dto.InitiatePaymentResponse;
 import productservice.pesapal.PesaPal;
 import productservice.feignclients.authentication.AuthenticationClient;
@@ -15,11 +18,13 @@ import productservice.feignclients.authentication.UserData;
 import productservice.payment.dto.CallBackResponse;
 import productservice.payment.enums.PaymentReason;
 import productservice.payment.enums.PaymentStatus;
-import productservice.visits.RequestVisit;
-import productservice.visits.RequestVisitRepository;
+import productservice.visit.RequestVisit;
+import productservice.visit.RequestVisitRepository;
+
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 
 @Service
@@ -29,6 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final RequestVisitRepository visitRepository;
+    private final BookRoomRepository bookRoomRepository;
     private final PesaPal pesaPal;
     private final PesaPalConfigurations configurations;
     private final AuthenticationClient authenticationClient;
@@ -42,9 +48,11 @@ public class PaymentServiceImpl implements PaymentService {
         RequestVisit visit = visitRepository.findById(request.visitId())
                 .orElseThrow(() -> new RuntimeException("Request not found for this id: " + request.visitId()));
 
+        String referenceId = UUID.randomUUID().toString();
+
         PaymentConfirmation payment = PaymentConfirmation.builder()
                 .orderTrackingId(visit.getOrderTrackingId())
-                .referenceId(request.referenceId())
+                .referenceId(referenceId)
                 .status(PaymentStatus.INITIATED)
                 .paymentTime(LocalDateTime.now())
                 .paymentReason(paymentReason)
@@ -80,7 +88,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .currency(configurations.getCurrency())
                 .amount(formattedAmount.floatValue())
                 .description(request.description())
-                .referenceId(request.referenceId())
+                .referenceId(referenceId)
                 .paymentReason(paymentReason.toString())
                 .redirectMode(configurations.getRedirectMode())
                 .callbackUrl(configurations.getCallbackUrl())
@@ -90,8 +98,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
 
         log.info("Submitting request to PesaPal: {} with amount {}", submitRequest, formattedAmount);
-        InitiatePaymentResponse response = pesaPal.submitOrderRequest(submitRequest);
-        return response;
+        return pesaPal.submitOrderRequest(submitRequest);
     }
 
     @Override
@@ -129,13 +136,13 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void confirmBookingPayment(PaymentConfirmation payment) {
-        RequestVisit visit = visitRepository.findByOrderTrackingId(payment.getMerchantReference())
-                .orElseThrow(() -> new RuntimeException("Visit not found"));
+       BookRoom room = bookRoomRepository.findByOrderTrackingId(payment.getOrderTrackingId())
+               .orElseThrow(() -> new RuntimeException("room not found for this id"));
 
-        visit.setStatus(RequestVisit.RequestStatus.PENDING);
-        visitRepository.save(visit);
-        payment.setRequestVisit(visit);
-        paymentRepository.save(payment);
+       room.setBookingStatus(BookingStatus.BOOKED);
+       bookRoomRepository.save(room);
+       payment.setBookRoom(room);
+       paymentRepository.save(payment);
     }
 
     private Float resolveAmount(PaymentReason paymentReason, PaymentRequest request) {

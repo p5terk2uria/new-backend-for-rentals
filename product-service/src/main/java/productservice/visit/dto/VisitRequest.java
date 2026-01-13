@@ -1,4 +1,4 @@
-package productservice.visits.dto;
+package productservice.visit.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,7 +15,7 @@ public record VisitRequest(
 
         String notes,
 
-        String propertyId
+        String roomId
 
 ) {
 }

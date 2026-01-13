@@ -1,4 +1,4 @@
-package productservice.bookings.externalApIs;
+package productservice.externalApIs;
 
 import lombok.Getter;
 import lombok.Setter;

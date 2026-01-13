@@ -12,15 +12,13 @@ public record PaymentRequest(
 
         String visitId,
 
+        String bookPropertyId,
+
         String currency,
 
         Float amount,
 
-        String description,
-
-        String referenceId
-
-
+        String description
 
 ) {
 

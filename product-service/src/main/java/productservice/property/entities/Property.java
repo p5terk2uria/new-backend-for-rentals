@@ -2,7 +2,6 @@ package productservice.property.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import productservice.property.enums.HouseType;
 
 @Entity
 @AllArgsConstructor
@@ -16,7 +15,6 @@ public class Property {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    //TODO ---> this will have a many to one relationship with the landlord
     private String ownerId;
 
     private String ownerName;
@@ -29,8 +27,7 @@ public class Property {
 
     private String houseDescription;
 
-    @Enumerated(EnumType.STRING)
-    private HouseType houseType;
+    private int noOfRooms;
 
     private String videoLink;
 

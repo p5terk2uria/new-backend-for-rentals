@@ -1,87 +1,93 @@
 package productservice.specifications;
 
+
 import jakarta.persistence.criteria.*;
-import lombok.NonNull;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 import productservice.property.dto.PropertySearchRequest;
 import productservice.property.entities.Property;
-import productservice.property.entities.PropertyBills;
 import productservice.property.entities.PropertyAmenities;
+import productservice.property.entities.RoomBills;
+import productservice.room.Room;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PropertySpecification {
 
     public static Specification<Property> searchProperty(PropertySearchRequest request) {
 
-        return new Specification<Property>() {
-            @Override
-            public Predicate toPredicate(
-                    @NonNull Root<Property> root,
-                    CriteriaQuery<?> query,
-                    @NonNull CriteriaBuilder criteriaBuilder
-            ) {
+        return new Specification<>() {
 
+            /**
+             * @param root
+             * @param query
+             * @param cb
+             * @return
+             */
+            @Nullable
+            @Override
+            public Predicate toPredicate(Root<Property> root, CriteriaQuery<?> query,
+                                         CriteriaBuilder cb) {
                 query.distinct(true);
 
-                Predicate predicate = criteriaBuilder.conjunction();
+                Predicate predicate = cb.conjunction();
 
-                Map<String, String> stringFilters = new java.util.HashMap<>();
-                if (request.ownerName() != null) stringFilters.put("ownerName", request.ownerName());
-                if (request.propertyName() != null) stringFilters.put("propertyName", request.propertyName());
-                if (request.propertyLocation() != null) stringFilters.put("propertyLocation", request.propertyLocation());
+                Map<String, String> stringFilters = new HashMap<>();
+
+                stringFilters.put("ownerName", request.ownerName());
+                stringFilters.put("propertyName", request.propertyName());
+                stringFilters.put("propertyLocation", request.propertyLocation());
+
 
                 for (Map.Entry<String, String> entry : stringFilters.entrySet()) {
-                    String field = entry.getKey();
-                    String value = entry.getValue();
-                    if (value != null) {
-                        predicate = criteriaBuilder.and(
-                                predicate,
-                                criteriaBuilder.like(
-                                        criteriaBuilder.lower(root.get(field)),
-                                        "%" + value.toLowerCase() + "%"
-                                )
-                        );
+                    if (entry.getValue() != null) {
+                        predicate = cb.and(predicate,
+                                cb.like(cb.lower(root.get(entry.getKey())),
+                                        "%" + entry.getValue().toLowerCase() + "%"));
                     }
                 }
 
+
                 if (request.ownerId() != null) {
-                    predicate = criteriaBuilder.and(
-                            predicate,
-                            criteriaBuilder.equal(root.get("ownerId"), request.ownerId())
-                    );
+                    predicate = cb.and(predicate,
+                            cb.equal(root.get("ownerId"), request.ownerId()));
                 }
 
-                if (request.houseType() != null) {
-                    predicate = criteriaBuilder.and(
-                            predicate,
-                            criteriaBuilder.equal(root.get("houseType"), request.houseType())
-                    );
-                }
-
-                boolean filterBills = request.minMonthlyBill() != null || request.maxMonthlyBill() != null
+                boolean filterRooms = request.houseType() != null
+                        || request.minMonthlyBill() != null || request.maxMonthlyBill() != null
                         || request.minMaintenanceBill() != null || request.maxMaintenanceBill() != null
                         || request.minOtherBills() != null || request.maxOtherBills() != null
-                        || request.minWaterBill() != null || request.maxWaterBill() != null;
+                        || request.minWaterBill() != null || request.maxWaterBill() != null
+                        || request.vacantOnly() != null;
 
-                if (filterBills) {
-                    Subquery<String> subquery = query.subquery(String.class);
-                    Root<PropertyBills> billRoot = subquery.from(PropertyBills.class);
-                    subquery.select(billRoot.get("property").get("id"));
+                if (filterRooms) {
+                    Subquery<String> roomSubquery = query.subquery(String.class);
+                    Root<Room> roomRoot = roomSubquery.from(Room.class);
+                    Join<Room, RoomBills> billsJoin = roomRoot.join("roomBills", JoinType.LEFT);
 
-                    Predicate billPredicate = criteriaBuilder.conjunction();
-                    billPredicate = addRangeFilter(criteriaBuilder, billPredicate, billRoot, "houseBill", request.minMonthlyBill(), request.maxMonthlyBill());
-                    billPredicate = addRangeFilter(criteriaBuilder, billPredicate, billRoot, "maintenanceBill", request.minMaintenanceBill(), request.maxMaintenanceBill());
-                    billPredicate = addRangeFilter(criteriaBuilder, billPredicate, billRoot, "otherBills", request.minOtherBills(), request.maxOtherBills());
-                    billPredicate = addRangeFilter(criteriaBuilder, billPredicate, billRoot, "waterBill", request.minWaterBill(), request.maxWaterBill());
+                    roomSubquery.select(roomRoot.get("property").get("id"));
 
-                    subquery.where(criteriaBuilder.and(
-                            billPredicate,
-                            criteriaBuilder.equal(billRoot.get("property"), root)
-                    ));
+                    Predicate roomPredicate = cb.conjunction();
 
-                    predicate = criteriaBuilder.and(predicate, root.get("id").in(subquery));
+                    if (request.vacantOnly() != null && request.vacantOnly()) {
+                        roomPredicate = cb.and(roomPredicate, cb.isTrue(roomRoot.get("vacant")));
+                    }
+
+                    if (request.houseType() != null) {
+                        roomPredicate = cb.and(roomPredicate,
+                                cb.equal(roomRoot.get("houseType"), request.houseType()));
+                    }
+
+                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "houseBill", request.minMonthlyBill(), request.maxMonthlyBill());
+                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "maintenanceBill", request.minMaintenanceBill(), request.maxMaintenanceBill());
+                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "otherBills", request.minOtherBills(), request.maxOtherBills());
+                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "waterBill", request.minWaterBill(), request.maxWaterBill());
+
+                    roomSubquery.where(cb.and(roomPredicate, cb.equal(roomRoot.get("property"), root)));
+
+                    predicate = cb.and(predicate, root.get("id").in(roomSubquery));
                 }
 
                 if (request.amenityType() != null) {
@@ -89,42 +95,42 @@ public class PropertySpecification {
                     Root<PropertyAmenities> amenityRoot = amenitySubquery.from(PropertyAmenities.class);
                     amenitySubquery.select(amenityRoot.get("property").get("id"));
 
-                    Predicate amenityPredicate = criteriaBuilder.equal(amenityRoot.get("amenityType"), request.amenityType());
+                    Predicate amenityPredicate = cb.equal(amenityRoot.get("amenityType"), request.amenityType());
 
-                    amenitySubquery.where(criteriaBuilder.and(
+                    amenitySubquery.where(cb.and(
                             amenityPredicate,
-                            criteriaBuilder.equal(amenityRoot.get("property"), root)
+                            cb.equal(amenityRoot.get("property"), root)
                     ));
 
-                    predicate = criteriaBuilder.and(predicate, root.get("id").in(amenitySubquery));
+                    predicate = cb.and(predicate, root.get("id").in(amenitySubquery));
                 }
 
                 return predicate;
             }
         };
+
     }
 
-    private static Predicate addRangeFilter(CriteriaBuilder criteriaBuilder,
+
+    private static Predicate addRangeFilter(CriteriaBuilder cb,
                                             Predicate predicate,
                                             Path<BigDecimal> fieldPath,
                                             BigDecimal min,
                                             BigDecimal max) {
 
-        if (min != null) {
-            predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(fieldPath, min));
-        }
-        if (max != null) {
-            predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThanOrEqualTo(fieldPath, max));
-        }
+        if (min != null) predicate = cb.and(predicate, cb.greaterThanOrEqualTo(fieldPath, min));
+        if (max != null) predicate = cb.and(predicate, cb.lessThanOrEqualTo(fieldPath, max));
+
         return predicate;
     }
 
-    private static Predicate addRangeFilter(CriteriaBuilder criteriaBuilder,
+    private static Predicate addRangeFilter(CriteriaBuilder cb,
                                             Predicate predicate,
                                             From<?, ?> join,
                                             String fieldName,
                                             BigDecimal min,
                                             BigDecimal max) {
-        return addRangeFilter(criteriaBuilder, predicate, join.get(fieldName), min, max);
+
+        return addRangeFilter(cb, predicate, join.get(fieldName), min, max);
     }
 }

@@ -1,4 +1,4 @@
-package productservice.bookings;
+package productservice.payment;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

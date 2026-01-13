@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import jdk.jfr.Description;
 import productservice.property.enums.AmenityType;
-import productservice.property.enums.HouseType;
-
 import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -27,15 +25,11 @@ public record PropertyRequest(
         @NotBlank(message = "The searchProperty location must be disclosed")
         String propertyLocation,
 
-        @NotBlank(message = "House type must be specified")
-        HouseType houseType,
-
         @NotBlank(message = "HouseDescription type must be specified")
         String houseDescription,
 
-        Set<AmenityType> amenities,
+        Set<AmenityType> amenities
 
-        Set<BillsRequest> bills
 
 ) {
 }

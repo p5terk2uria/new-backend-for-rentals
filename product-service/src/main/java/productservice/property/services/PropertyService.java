@@ -9,6 +9,7 @@ import productservice.property.dto.PropertyResponse;
 import productservice.property.dto.PropertySearchRequest;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Component
 public interface PropertyService {
@@ -17,5 +18,10 @@ public interface PropertyService {
 
     Page<PropertyResponse> searchProperty(PropertySearchRequest request, Pageable pageable);
 
-    String saveVideo(MultipartFile file) throws IOException;
+    String savePropertyVideo(MultipartFile file) throws IOException;
+
+    String saveRoomVideo(MultipartFile file) throws IOException;
+
+    Set<String> saveRoomImages(MultipartFile[] files) throws IOException;
+
 }

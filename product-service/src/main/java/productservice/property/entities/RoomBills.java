@@ -2,6 +2,7 @@ package productservice.property.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import productservice.room.Room;
 
 import java.math.BigDecimal;
 
@@ -11,22 +12,22 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PropertyBills {
+public class RoomBills {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String  id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Property property;
+    private Room room;
 
-    private BigDecimal houseBill;
+    private String houseBill;
 
-    private BigDecimal waterBill;
+    private String waterBill;
 
-    private BigDecimal trashBill;
+    private String trashBill;
 
-    private BigDecimal maintenanceBill;
+    private String maintenanceBill;
 
-    private BigDecimal otherBills;
+    private String otherBills;
 }

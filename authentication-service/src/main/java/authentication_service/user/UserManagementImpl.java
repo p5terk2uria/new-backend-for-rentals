@@ -58,12 +58,12 @@ public class UserManagementImpl implements UserManagementService {
         }
         String token = securityConfig.generateJwtToken(user);
 
-        return new LoginResponse(
-                user.getEmail(),
-                token,
-                user.getId(),
-                user.getRole()
-        );
+        return LoginResponse.builder()
+                .token(token)
+                .userName(user.getId())
+                .userName(user.getFirstName())
+                .userRole(user.getRole())
+                .build();
 
     }
 

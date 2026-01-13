@@ -1,34 +1,20 @@
 package productservice.property.dto;
 
 import productservice.property.enums.AmenityType;
-import productservice.property.enums.HouseType;
+import productservice.room.dto.RoomResponse;
 
 import java.util.Set;
 
-public record PropertyResponse (
-
+public record PropertyResponse(
         String id,
-
-        String ownerId,
-
-        String ownerName,
 
         String propertyName,
 
-        String ownerEmail,
-
         String propertyLocation,
-
-        HouseType houseType,
 
         String videoLink,
 
-        Set<BillsRequest> bills,
+        Set<AmenityType> amenities,
 
-        Set<AmenityType> amenities
-        
-
-
-
-) {
-}
+        Set<RoomResponse> rooms
+) {}

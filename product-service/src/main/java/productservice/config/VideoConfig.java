@@ -15,7 +15,20 @@ import org.springframework.stereotype.Component;
 @Setter
 public class VideoConfig {
 
-    private String  folder;
-
+    private Property property;
+    private Room room;
     private String baseUrl;
+
+    @Getter
+    @Setter
+    public static class Property {
+        private String videos;
+    }
+
+    @Getter
+    @Setter
+    public static class Room {
+        private String videos;
+        private String images;
+    }
 }

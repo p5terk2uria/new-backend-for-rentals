@@ -1,8 +1,9 @@
-package productservice.visits;
+package productservice.visit;
 
 import jakarta.persistence.*;
 import lombok.*;
-import productservice.property.entities.Property;
+import productservice.room.Room;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -34,8 +35,8 @@ public class RequestVisit {
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
-    @OneToOne
-    private Property property;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Room room;
 
     @Column(length = 1000)
     private String notes;

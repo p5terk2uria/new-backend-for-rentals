@@ -16,10 +16,13 @@ import productservice.property.dto.PropertyResponse;
 import productservice.property.dto.PropertySearchRequest;
 import productservice.property.enums.AmenityType;
 import productservice.property.enums.HouseType;
+import productservice.room.RoomService;
+import productservice.room.dto.RoomRequest;
 import productservice.property.services.PropertyService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/products/property")
@@ -29,13 +32,14 @@ public class ProductController extends BaseController {
 
     private final PropertyService propertyService;
     private final ObjectMapper objectMapper;
+    private final RoomService roomService;
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<?>> createProperty(
             @RequestParam String request,
             @RequestParam MultipartFile file) throws IOException {
 
-        String filePath = propertyService.saveVideo(file);
+        String filePath = propertyService.savePropertyVideo(file);
         PropertyRequest propertyRequest = objectMapper.readValue(request, PropertyRequest.class);
 
         propertyService.createProperty(propertyRequest, filePath);
@@ -43,6 +47,7 @@ public class ProductController extends BaseController {
                 success("Property created successfully", null)
         );
     }
+
     @GetMapping("/search")
     public ApiResponse<Page<PropertyResponse>> searchProperty(
             @RequestParam(required = false) String ownerId,
@@ -61,8 +66,9 @@ public class ProductController extends BaseController {
             @RequestParam(required = false) BigDecimal maxMaintenanceBill,
             @RequestParam(required = false) BigDecimal minOtherBills,
             @RequestParam(required = false) BigDecimal maxOtherBills,
+            @RequestParam(required = false) Boolean vacantOnly,
             Pageable pageable
-    ){
+    ) {
         var request = new PropertySearchRequest(
                 ownerId, ownerName, propertyName,
                 propertyLocation, houseType,
@@ -70,14 +76,49 @@ public class ProductController extends BaseController {
                 maxMonthlyBill, minWaterBill,
                 maxWaterBill, minTrashBill,
                 maxTrashBill, minMaintenanceBill,
-                maxMaintenanceBill,minOtherBills,
-                maxOtherBills
+                maxMaintenanceBill, minOtherBills,
+                maxOtherBills, vacantOnly
         );
-
         Page<PropertyResponse> responsePage = propertyService.searchProperty(request, pageable);
         return new ApiResponse<>(true, "Fetched properties", responsePage);
+    }
 
+    @PostMapping(value = "/create-room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<?>> createRoom(
+            @RequestParam String request,
+            @RequestPart(required = false) MultipartFile roomVideo,
+            @RequestPart(required = false) MultipartFile[] roomImages
+    ) throws IOException {
 
+        RoomRequest roomRequest = objectMapper.readValue(request, RoomRequest.class);
+
+        String videoLink = propertyService.saveRoomVideo(roomVideo);
+        Set<String> imageLinks = propertyService.saveRoomImages(roomImages);
+
+        roomService.createRoom(roomRequest, videoLink, imageLinks);
+        return ResponseEntity.ok(success("Room created successfully"));
+    }
+
+    @PostMapping(value = "/upload-room-media", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<?>> uploadVideoImage(
+            @RequestParam String roomId,
+            @RequestParam(required = false) MultipartFile roomVideo,
+            @RequestParam(required = false) MultipartFile[] roomImages
+    ) throws IOException {
+        String videoLink = propertyService.saveRoomVideo(roomVideo);
+        Set<String> imageLinks = propertyService.saveRoomImages(roomImages);
+        roomService.uploadRoomMedia(roomId, videoLink, imageLinks);
+        return ResponseEntity.ok(success("success upload"));
 
     }
+
+    @PostMapping(value = "/upload-room-status")
+    public ResponseEntity<ApiResponse<?>> updateRoomStatus (
+            @RequestParam boolean newStatus,
+            @RequestParam String roomId
+    ){
+        roomService.updateRoomStatus(roomId, newStatus);
+        return ResponseEntity.ok(success("success"));
+    }
+
 }

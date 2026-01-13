@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import productservice.feignclients.authentication.AuthenticationClient;
 import productservice.feignclients.authentication.UserData;
-import productservice.property.repository.PropertyRepository;
-import productservice.visits.RequestVisit;
-import productservice.visits.dto.VisitRequest;
+import productservice.visit.RequestVisit;
+import productservice.visit.dto.VisitRequest;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
