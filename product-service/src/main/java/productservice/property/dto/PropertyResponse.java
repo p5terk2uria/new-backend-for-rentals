@@ -12,7 +12,9 @@ public record PropertyResponse(
 
         String propertyLocation,
 
-        String videoLink,
+        String imageLink,
+
+        String propertyResponse,
 
         Set<AmenityType> amenities,
 

@@ -38,6 +38,7 @@ public record RegisterRequest(
         @Schema(description = "the registration password must be specified")
         String password,
 
+        @NotNull(message = "Location details must be specified")
         LocationDetailsRequest locationDetails
 ) {
     public static User toUserTable(RegisterRequest registerRequest) {

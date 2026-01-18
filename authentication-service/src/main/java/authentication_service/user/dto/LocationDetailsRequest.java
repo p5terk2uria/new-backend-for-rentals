@@ -3,6 +3,7 @@ package authentication_service.user.dto;
 import authentication_service.user.location.LocationDetails;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -16,6 +17,7 @@ public record LocationDetailsRequest (
 
         String state,
 
+        @NotNull(message = "city cannot be null")
         String city,
 
         String postalCode,

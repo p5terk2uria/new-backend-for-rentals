@@ -20,12 +20,6 @@ public class PropertySpecification {
 
         return new Specification<>() {
 
-            /**
-             * @param root
-             * @param query
-             * @param cb
-             * @return
-             */
             @Nullable
             @Override
             public Predicate toPredicate(Root<Property> root, CriteriaQuery<?> query,
@@ -35,11 +29,9 @@ public class PropertySpecification {
                 Predicate predicate = cb.conjunction();
 
                 Map<String, String> stringFilters = new HashMap<>();
-
                 stringFilters.put("ownerName", request.ownerName());
                 stringFilters.put("propertyName", request.propertyName());
                 stringFilters.put("propertyLocation", request.propertyLocation());
-
 
                 for (Map.Entry<String, String> entry : stringFilters.entrySet()) {
                     if (entry.getValue() != null) {
@@ -49,18 +41,25 @@ public class PropertySpecification {
                     }
                 }
 
-
                 if (request.ownerId() != null) {
                     predicate = cb.and(predicate,
                             cb.equal(root.get("ownerId"), request.ownerId()));
                 }
 
-                boolean filterRooms = request.houseType() != null
-                        || request.minMonthlyBill() != null || request.maxMonthlyBill() != null
-                        || request.minMaintenanceBill() != null || request.maxMaintenanceBill() != null
-                        || request.minOtherBills() != null || request.maxOtherBills() != null
-                        || request.minWaterBill() != null || request.maxWaterBill() != null
-                        || request.vacantOnly() != null;
+                if (request.propertyId() != null) {
+                    predicate = cb.and(predicate,
+                            cb.equal(root.get("id"), request.propertyId()));
+                }
+
+                // MODIFIED: Always join rooms when searching by propertyId
+                boolean filterRooms = request.propertyId() != null || (
+                        request.houseType() != null
+                                || request.minMonthlyBill() != null || request.maxMonthlyBill() != null
+                                || request.minMaintenanceBill() != null || request.maxMaintenanceBill() != null
+                                || request.minOtherBills() != null || request.maxOtherBills() != null
+                                || request.minWaterBill() != null || request.maxWaterBill() != null
+                                || request.vacantOnly() != null
+                );
 
                 if (filterRooms) {
                     Subquery<String> roomSubquery = query.subquery(String.class);
@@ -71,6 +70,12 @@ public class PropertySpecification {
 
                     Predicate roomPredicate = cb.conjunction();
 
+                    // If searching by propertyId, get ALL rooms for that property
+                    if (request.propertyId() != null) {
+                        roomPredicate = cb.and(roomPredicate,
+                                cb.equal(roomRoot.get("property").get("id"), request.propertyId()));
+                    }
+
                     if (request.vacantOnly() != null && request.vacantOnly()) {
                         roomPredicate = cb.and(roomPredicate, cb.isTrue(roomRoot.get("vacant")));
                     }
@@ -80,10 +85,14 @@ public class PropertySpecification {
                                 cb.equal(roomRoot.get("houseType"), request.houseType()));
                     }
 
-                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "houseBill", request.minMonthlyBill(), request.maxMonthlyBill());
-                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "maintenanceBill", request.minMaintenanceBill(), request.maxMaintenanceBill());
-                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "otherBills", request.minOtherBills(), request.maxOtherBills());
-                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "waterBill", request.minWaterBill(), request.maxWaterBill());
+                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "houseBill",
+                            request.minMonthlyBill(), request.maxMonthlyBill());
+                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "maintenanceBill",
+                            request.minMaintenanceBill(), request.maxMaintenanceBill());
+                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "otherBills",
+                            request.minOtherBills(), request.maxOtherBills());
+                    roomPredicate = addRangeFilter(cb, roomPredicate, billsJoin, "waterBill",
+                            request.minWaterBill(), request.maxWaterBill());
 
                     roomSubquery.where(cb.and(roomPredicate, cb.equal(roomRoot.get("property"), root)));
 
@@ -108,9 +117,7 @@ public class PropertySpecification {
                 return predicate;
             }
         };
-
     }
-
 
     private static Predicate addRangeFilter(CriteriaBuilder cb,
                                             Predicate predicate,

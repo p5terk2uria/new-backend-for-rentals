@@ -10,7 +10,6 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +20,7 @@ public class UserManagementImpl implements UserManagementService {
     private final LocationRepository locationRepository;
     private final mapper userMapper;
 
-    /**
-     * @param request
-     */
+
     @Override
     public void registerUser(RegisterRequest request) {
 
@@ -35,16 +32,14 @@ public class UserManagementImpl implements UserManagementService {
 
         var savedUser = userManagementRepository.save(newUser);
 
-        LocationDetails details = LocationDetailsRequest.toLocationEntity(request.locationDetails());
-        details.setUser(savedUser);
-        locationRepository.save(details);
+        if (!(request.locationDetails() == null)) {
+            LocationDetails details = LocationDetailsRequest.toLocationEntity(request.locationDetails());
+            details.setUser(savedUser);
+            locationRepository.save(details);
+        }
 
     }
 
-    /**
-     * @param request
-     * @return
-     */
     @Override
     public LoginResponse login(LoginRequest request) {
 
@@ -67,10 +62,6 @@ public class UserManagementImpl implements UserManagementService {
 
     }
 
-    /**
-     * @param userId
-     * @return
-     */
     @Override
     public UserData findById(String userId) {
 
@@ -84,8 +75,6 @@ public class UserManagementImpl implements UserManagementService {
     }
 
     /**
-     * @param authHeader 
-     * @return
      */
     @Override
     public ValidationResponse validateToken(String authHeader) {

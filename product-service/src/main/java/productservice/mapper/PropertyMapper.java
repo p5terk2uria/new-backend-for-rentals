@@ -27,8 +27,7 @@ public class PropertyMapper {
                 .build();
     }
 
-    public RoomResponse toRoomResponse(Room room) {
-        RoomBills bills = room.getRoomBills();
+    public RoomResponse toRoomResponse(Room room, RoomBills bills) {
         return new RoomResponse(
                 room.getId(),
                 room.getHouseType(),
@@ -42,12 +41,17 @@ public class PropertyMapper {
         );
     }
 
+    public RoomResponse toRoomResponse(Room room) {
+        return toRoomResponse(room, room.getRoomBills());
+    }
+
     public PropertyResponse toResponse(Property property, Set<AmenityType> amenities, Set<RoomResponse> rooms) {
         return new PropertyResponse(
                 property.getId(),
                 property.getPropertyName(),
                 property.getPropertyLocation(),
                 property.getVideoLink(),
+                property.getHouseDescription(),
                 amenities,
                 rooms
         );

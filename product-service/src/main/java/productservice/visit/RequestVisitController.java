@@ -22,7 +22,6 @@ public class RequestVisitController extends BaseController {
     private final PaymentService paymentService;
 
 
-    @RequireRole("TENANT")
     @PostMapping("/visit")
     public ResponseEntity<ApiResponse<?>> requestVisit(
             @RequestBody VisitRequest request
@@ -39,7 +38,6 @@ public class RequestVisitController extends BaseController {
 
     }
 
-    @RequireRole("ADMIN, TENANT")
     @PutMapping("/update-status")
     public ResponseEntity<ApiResponse<?>> updateVisitStatus(
             @RequestParam String userId,

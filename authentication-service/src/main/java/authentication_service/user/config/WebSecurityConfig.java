@@ -16,16 +16,16 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/authentication/login",
-                        "/authentication/register",
-                        "/authentication/validate-token",
-                        "/authentication/feign/**",
-                        "/v3/api-docs/**",
-                        "/swagger-ui/**"
-                ).permitAll()
-                .anyRequest().authenticated()
-        )
+                        .requestMatchers(
+                                "/authentication/login",
+                                "/authentication/register",
+                                "/authentication/validate-token",
+                                "/authentication/feign/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
 
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable);

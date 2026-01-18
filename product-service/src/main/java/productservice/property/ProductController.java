@@ -3,6 +3,7 @@ package productservice.property;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -28,6 +29,7 @@ import java.util.Set;
 @RequestMapping("/api/products/property")
 @Description("Property management API")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductController extends BaseController {
 
     private final PropertyService propertyService;
@@ -42,9 +44,9 @@ public class ProductController extends BaseController {
         String filePath = propertyService.savePropertyVideo(file);
         PropertyRequest propertyRequest = objectMapper.readValue(request, PropertyRequest.class);
 
-        propertyService.createProperty(propertyRequest, filePath);
+        var response = propertyService.createProperty(propertyRequest, filePath);
         return ResponseEntity.ok(
-                success("Property created successfully", null)
+                success("Property created successfully", response)
         );
     }
 
@@ -52,6 +54,7 @@ public class ProductController extends BaseController {
     public ApiResponse<Page<PropertyResponse>> searchProperty(
             @RequestParam(required = false) String ownerId,
             @RequestParam(required = false) String ownerName,
+            @RequestParam(required = false) String propertyId,
             @RequestParam(required = false) String propertyName,
             @RequestParam(required = false) String propertyLocation,
             @RequestParam(required = false) HouseType houseType,
@@ -69,8 +72,9 @@ public class ProductController extends BaseController {
             @RequestParam(required = false) Boolean vacantOnly,
             Pageable pageable
     ) {
+
         var request = new PropertySearchRequest(
-                ownerId, ownerName, propertyName,
+                ownerId, ownerName,propertyId, propertyName,
                 propertyLocation, houseType,
                 amenityType, minMonthlyBill,
                 maxMonthlyBill, minWaterBill,
@@ -112,11 +116,11 @@ public class ProductController extends BaseController {
 
     }
 
-    @PostMapping(value = "/upload-room-status")
-    public ResponseEntity<ApiResponse<?>> updateRoomStatus (
+    @PostMapping(value = "/update-room-status")
+    public ResponseEntity<ApiResponse<?>> updateRoomStatus(
             @RequestParam boolean newStatus,
             @RequestParam String roomId
-    ){
+    ) {
         roomService.updateRoomStatus(roomId, newStatus);
         return ResponseEntity.ok(success("success"));
     }

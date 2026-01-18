@@ -25,12 +25,12 @@ public class Room {
     @Enumerated(EnumType.STRING)
     private HouseType houseType;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private RoomBills roomBills;
 
     private String houseBill;
 
-    private boolean vacant = true;
+    private boolean vacant;
 
     private Set<String> imageUrls;
 

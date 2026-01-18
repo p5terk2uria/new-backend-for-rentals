@@ -10,6 +10,8 @@ public record PropertySearchRequest (
 
         String ownerName,
 
+        String propertyId,
+
         String propertyName,
 
         String propertyLocation,

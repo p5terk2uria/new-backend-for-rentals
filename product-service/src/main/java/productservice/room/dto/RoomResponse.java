@@ -1,7 +1,6 @@
 package productservice.room.dto;
 
 import productservice.property.enums.HouseType;
-import java.math.BigDecimal;
 import java.util.Set;
 
 public record RoomResponse(
@@ -21,5 +20,5 @@ public record RoomResponse(
 
         String otherBills,
 
-        Set<String> imageUrls
+        Set<String> roomVideo
 ) {}

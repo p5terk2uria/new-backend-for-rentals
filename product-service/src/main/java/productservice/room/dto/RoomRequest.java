@@ -1,6 +1,7 @@
 package productservice.room.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Builder;
 import productservice.property.enums.HouseType;
 import java.util.Set;
@@ -14,6 +15,7 @@ public record RoomRequest(
 
         HouseType houseType,
 
+        @Hidden
         String price,
 
         Boolean vacant,

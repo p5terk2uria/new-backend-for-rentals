@@ -6,13 +6,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import productservice.config.VideoConfig;
+import productservice.feignclients.authentication.AuthenticationClient;
+import productservice.feignclients.authentication.UserData;
 import productservice.mapper.PropertyMapper;
+import productservice.payment.dto.DomainRoles;
+import productservice.property.dto.PropertyCreationResponse;
 import productservice.property.dto.PropertyRequest;
 import productservice.property.dto.PropertyResponse;
 import productservice.property.dto.PropertySearchRequest;
 import productservice.property.entities.Property;
 import productservice.property.entities.PropertyAmenities;
+import productservice.property.entities.RoomBills;
 import productservice.property.repository.AmenitiesRepository;
+import productservice.property.repository.BillsRepository;
 import productservice.property.repository.PropertyRepository;
 import productservice.room.RoomRepository;
 import productservice.room.dto.RoomResponse;
@@ -36,14 +42,30 @@ public class PropertyServiceImpl implements PropertyService {
     private final AmenitiesRepository amenitiesRepository;
     private final PropertyMapper propertyMapper;
     private final VideoConfig videoConfig;
+    private final BillsRepository billsRepository;
+    private final AuthenticationClient client;
 
     @Override
-    public void createProperty(PropertyRequest request, String videoPath) {
+    public PropertyCreationResponse createProperty(PropertyRequest request, String videoPath) {
+//
+//        UserData userData = client.getUserById(request.ownerId());
+//        if (userData == null) {
+//            throw new RuntimeException("user not found for this id");
+//        }
+//
+//        if (userData.role() == DomainRoles.LAND_LORD) {
+//            throw new RuntimeException("Owner must be of a LandLord Role");
+//        }
+
         Property property = propertyMapper.toEntity(request);
         property.setVideoLink(videoPath);
         Property savedProperty = propertyRepository.save(property);
         Set<PropertyAmenities> amenities = propertyMapper.toPropertyAmenities(request.amenities(), savedProperty);
         amenitiesRepository.saveAll(amenities);
+        return PropertyCreationResponse.builder()
+                .propertyId(property.getId())
+                .propertyName(property.getPropertyName())
+                .build();
     }
 
     @Override
@@ -54,16 +76,15 @@ public class PropertyServiceImpl implements PropertyService {
                 .map(property -> {
                     Set<PropertyAmenities> amenities = amenitiesRepository.findByPropertyId(property.getId());
 
-                    Set<RoomResponse> rooms =
-                            roomRepository.findByPropertyId(property.getId()).stream()
-                                    .filter(room ->
-                                            request.vacantOnly() == null ||
-                                                    !request.vacantOnly() ||
-                                                    room.isVacant()
-                                    )
-                                    .map(propertyMapper::toRoomResponse)
-                                    .collect(Collectors.toSet());
+                    Set<RoomResponse> rooms = roomRepository.findByPropertyId(property.getId()).stream()
+                            .map(room -> {
 
+                                RoomBills bills = billsRepository.findRoomBillsByRoomId(room.getId())
+                                        .orElse(null);
+
+                                return propertyMapper.toRoomResponse(room, bills);
+                            })
+                            .collect(Collectors.toSet());
 
                     return propertyMapper.toResponse(property,
                             amenities.stream().map(PropertyAmenities::getAmenityType).collect(Collectors.toSet()),

@@ -1,6 +1,7 @@
 package productservice.room;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import productservice.mapper.RoomMapper;
 import productservice.property.entities.Property;
@@ -10,6 +11,7 @@ import productservice.room.dto.RoomRequest;
 
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService{
@@ -30,6 +32,10 @@ public class RoomServiceImpl implements RoomService{
         room.setVideoUrl(videoLink);
         room.setImageUrls(imageLinks);
         roomRepository.save(room);
+
+        log.error("Saving  room {}", request);
+        log.error ("saving a room {} and room image {}", room.getVideoUrl(), room.getImageUrls());
+
         billsRepository.save(roomMapper.toRoomBills(request, room));
     }
 
@@ -56,7 +62,6 @@ public class RoomServiceImpl implements RoomService{
         if (currentStatus == newVacantStatus) {
             throw new RuntimeException("Room already has this status");
         }
-
         room.setVacant(newVacantStatus);
         roomRepository.save(room);
 

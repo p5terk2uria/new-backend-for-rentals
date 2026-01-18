@@ -42,8 +42,9 @@ public class AuthenticationFilter
             String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                log.warn("Authorization header missing for path: {}", exchange.getRequest().getPath());
-                return chain.filter(exchange);
+                log.warn("Missing or invalid Authorization header for path: {}",
+                        exchange.getRequest().getPath());
+                return exchange.getResponse().setComplete();
             }
 
             return webClientBuilder.build()
@@ -72,7 +73,6 @@ public class AuthenticationFilter
                     .doOnError(error -> log.error("Error during authentication: {}", error.getMessage()));
         };
     }
-
 
 
     public static class Config {}
