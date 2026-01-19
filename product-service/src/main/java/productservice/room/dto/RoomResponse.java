@@ -1,7 +1,7 @@
 package productservice.room.dto;
 
 import productservice.property.enums.HouseType;
-import java.util.Set;
+
 
 public record RoomResponse(
         String id,
@@ -20,5 +20,5 @@ public record RoomResponse(
 
         String otherBills,
 
-        Set<String> roomVideo
+        String roomVideo
 ) {}

@@ -14,7 +14,7 @@ public record PropertyResponse(
 
         String imageLink,
 
-        String propertyResponse,
+        String propertyDescription,
 
         Set<AmenityType> amenities,
 

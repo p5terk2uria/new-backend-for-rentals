@@ -55,7 +55,7 @@ public class UserManagementImpl implements UserManagementService {
 
         return LoginResponse.builder()
                 .token(token)
-                .userName(user.getId())
+                .userId(user.getId())
                 .userName(user.getFirstName())
                 .userRole(user.getRole())
                 .build();

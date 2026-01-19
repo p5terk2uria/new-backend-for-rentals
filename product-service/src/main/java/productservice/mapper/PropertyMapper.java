@@ -37,7 +37,7 @@ public class PropertyMapper {
                 bills != null ? bills.getTrashBill() : null,
                 bills != null ? bills.getMaintenanceBill() : null,
                 bills != null ? bills.getOtherBills() : null,
-                room.getImageUrls()
+                room.getVideoUrl()
         );
     }
 

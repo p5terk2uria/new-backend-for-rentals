@@ -1,6 +1,7 @@
 package productservice.property.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PropertyServiceImpl implements PropertyService {
 
@@ -47,15 +49,14 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public PropertyCreationResponse createProperty(PropertyRequest request, String videoPath) {
-//
-//        UserData userData = client.getUserById(request.ownerId());
-//        if (userData == null) {
-//            throw new RuntimeException("user not found for this id");
-//        }
-//
-//        if (userData.role() == DomainRoles.LAND_LORD) {
-//            throw new RuntimeException("Owner must be of a LandLord Role");
-//        }
+
+        UserData userData = client.getUserById(request.ownerId());
+        if (userData == null) {
+            throw new RuntimeException("user not found for this id");
+        }
+        if (userData.role() != DomainRoles.LAND_LORD) {
+            throw new RuntimeException("Owner must be of a LandLord Role");
+        }
 
         Property property = propertyMapper.toEntity(request);
         property.setVideoLink(videoPath);
@@ -109,20 +110,29 @@ public class PropertyServiceImpl implements PropertyService {
 
 
     private String saveFile(MultipartFile file, String folder) throws IOException {
+        if (file == null || file.isEmpty()) return null;
 
-        if (file == null || file.isEmpty()) {
-            return null;
-        }
-
-        Path folderPath = Paths.get(folder);
+        Path folderPath = Paths.get(folder).toAbsolutePath();
         Files.createDirectories(folderPath);
 
         String fileName = generateFileName(file.getOriginalFilename());
-        return videoConfig.getBaseUrl() + folderPath.resolve(fileName);
+        Path targetPath = folderPath.resolve(fileName);
+
+        file.transferTo(targetPath.toFile());
+
+        if (folder.startsWith("/home/dev/files/videos/")) {
+            String subFolder = folderPath.getFileName().toString();
+            return videoConfig.getBaseUrl() + subFolder + "/" + fileName;
+        } else if (folder.startsWith("/home/dev/files/images/")) {
+            String subFolder = folderPath.getFileName().toString();
+            return "/images/" + subFolder + "/" + fileName;
+        }
+
+        return "/" + folderPath.getFileName() + "/" + fileName;
     }
 
-    private Set<String> saveFiles(MultipartFile[] files, String folder) throws IOException {
 
+    private Set<String> saveFiles(MultipartFile[] files, String folder) throws IOException {
         if (files == null || files.length == 0) {
             return Set.of();
         }
@@ -137,6 +147,7 @@ public class PropertyServiceImpl implements PropertyService {
                 })
                 .collect(Collectors.toSet());
     }
+
 
 
     private String generateFileName(String originalFileName) {

@@ -49,10 +49,11 @@ authentication:
 videos:
   base-url: http://localhost:8333/videos/
   property:
-    videos: videos/properties
+    videos: /home/dev/files/videos/properties
   room:
-    videos: videos/rooms
-    images: images/rooms
+    videos: /home/dev/files/videos/rooms
+    images: /home/dev/files/images/roomspackage
+
 
 gateway:
   secret: "Gv7kR2t0eJ0mQyqB1T8Vw3C4Z9lFh2rPp8bK0sXq7Jt4Wm9eD3Fq6Yv1Nn5Rc8Zd"

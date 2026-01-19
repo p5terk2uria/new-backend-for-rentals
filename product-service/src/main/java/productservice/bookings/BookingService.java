@@ -10,5 +10,5 @@ public interface BookingService {
 
     BookingResponse bookRoom(BookingRequest request);
 
-    InitiatePaymentResponse initiateBookingPayment(PaymentRequest request);
+    InitiatePaymentResponse initiateBookingPayment(PaymentRequest request, PaymentReason paymentReason);
 }
