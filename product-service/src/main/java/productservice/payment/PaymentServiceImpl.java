@@ -18,6 +18,8 @@ import productservice.feignclients.authentication.UserData;
 import productservice.payment.dto.CallBackResponse;
 import productservice.payment.enums.PaymentReason;
 import productservice.payment.enums.PaymentStatus;
+import productservice.room.Room;
+import productservice.room.RoomRepository;
 import productservice.visit.RequestVisit;
 import productservice.visit.RequestVisitRepository;
 
@@ -33,6 +35,7 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final RoomRepository roomRepository;
     private final RequestVisitRepository visitRepository;
     private final BookRoomRepository bookRoomRepository;
     private final PesaPal pesaPal;
@@ -136,12 +139,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void confirmBookingPayment(PaymentConfirmation payment) {
-       BookRoom room = bookRoomRepository.findByOrderTrackingId(payment.getOrderTrackingId())
+       BookRoom bookRoom = bookRoomRepository.findByOrderTrackingId(payment.getOrderTrackingId())
                .orElseThrow(() -> new RuntimeException("room not found for this id"));
 
+       Room room = roomRepository.findById(bookRoom.getRoom().getId())
+                       .orElseThrow(()-> new RuntimeException("booked room not found"));
+
        room.setBookingStatus(BookingStatus.BOOKED);
-       bookRoomRepository.save(room);
-       payment.setBookRoom(room);
+       roomRepository.save(room);
+       bookRoom.setBookingStatus(BookingStatus.BOOKED);
+       bookRoomRepository.save(bookRoom);
+       payment.setBookRoom(bookRoom);
        paymentRepository.save(payment);
     }
 

@@ -39,6 +39,7 @@ public class BookServiceImpl implements BookingService {
     private final PesaPalConfigurations configurations;
 
     /**
+     *
      */
     @Override
     public BookingResponse bookRoom(BookingRequest request) {
@@ -52,13 +53,17 @@ public class BookServiceImpl implements BookingService {
             throw new IllegalArgumentException(" user not found with this id");
         }
 
+        if (room.getBookingStatus() == BookingStatus.BOOKED) {
+            throw new RuntimeException("Room already booked");
+        }
+
         BookRoom bookRoom = BookRoom.builder()
                 .bookingDate(LocalDate.now())
                 .room(room)
                 .bookingStatus(BookingStatus.UNBOOKED)
                 .orderTrackingId("ORDER" + UUID.randomUUID() + "_" + System.currentTimeMillis())
                 .userId(request.userId())
-                .houseBill(room.getHouseBill())
+                .houseBill(room.getRoomBills().getHouseBill())
                 .build();
 
         BookRoom bookRoom1 = bookRoomRepository.save(bookRoom);
@@ -79,12 +84,12 @@ public class BookServiceImpl implements BookingService {
 
         log.warn("Receiving request {}", request);
 
-        if(paymentReason != PaymentReason.BOOKING) {
+        if (paymentReason != PaymentReason.BOOKING) {
             throw new RuntimeException("Invalid Payment reason");
         }
 
         BookRoom bookRoom = bookRoomRepository.findById(request.bookRoomId())
-                .orElseThrow(()-> new RuntimeException("Book request not found for this id:" + request.bookRoomId()));
+                .orElseThrow(() -> new RuntimeException("Book request not found for this id:" + request.bookRoomId()));
 
         String referenceId = UUID.randomUUID().toString();
 
@@ -136,7 +141,7 @@ public class BookServiceImpl implements BookingService {
     }
 
     /**
-     * @param bookRoomId 
+     * @param bookRoomId
      * @return
      */
     @Override

@@ -7,6 +7,8 @@ import productservice.bookings.BookRoom;
 import productservice.bookings.dto.BookingSearchRequest;
 import productservice.room.Room;
 
+import java.time.LocalDate;
+
 public class BookingSpecification {
 
     public static Specification<BookRoom> searchBookings (BookingSearchRequest request) {
@@ -40,6 +42,23 @@ public class BookingSpecification {
                             predicate,
                             cb.equal(root.get("bookingStatus"), request.bookingStatus())
                     );
+                }
+                Path<LocalDate> bookingDatePath = root.get("bookingDate");
+
+                if (request.bookingDateFrom() != null) {
+                    predicate = cb.and(predicate,
+                            cb.greaterThanOrEqualTo(
+                                    bookingDatePath,
+                                    request.bookingDateFrom()
+                            ));
+                }
+
+                if (request.bookingDateTo() != null) {
+                    predicate = cb.and(predicate,
+                            cb.lessThanOrEqualTo(
+                                    bookingDatePath,
+                                    request.bookingDateTo()
+                            ));
                 }
 
 

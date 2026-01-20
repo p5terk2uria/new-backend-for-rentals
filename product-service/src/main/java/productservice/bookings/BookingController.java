@@ -42,8 +42,6 @@ public class BookingController extends BaseController {
     public ResponseEntity<ApiResponse<?>> payBookingBill(
             @RequestBody PaymentRequest request
     ) {
-
-        log.warn("Received request:::::::::::::::::::::::{}", request);
         return ResponseEntity.ok(success("success",
                 bookingService.initiateBookingPayment(request, PaymentReason.BOOKING)));
     }

@@ -2,6 +2,7 @@ package productservice.room;
 
 import jakarta.persistence.*;
 import lombok.*;
+import productservice.bookings.dto.BookingStatus;
 import productservice.property.entities.Property;
 import productservice.property.entities.RoomBills;
 import productservice.property.enums.HouseType;
@@ -35,4 +36,7 @@ public class Room {
     private Set<String> imageUrls;
 
     private String videoUrl;
+
+    @Enumerated(EnumType.STRING)
+    private BookingStatus bookingStatus;
 }

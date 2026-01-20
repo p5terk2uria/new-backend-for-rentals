@@ -1,9 +1,12 @@
 package productservice.visit;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import productservice.bookings.dto.PaymentRequest;
 import productservice.payment.dto.InitiatePaymentResponse;
 import productservice.payment.enums.PaymentReason;
+import productservice.visit.dto.RequestVisitSearchRequest;
 import productservice.visit.dto.VisitRequest;
 import productservice.visit.dto.VisitResponse;
 
@@ -18,4 +21,6 @@ public interface RequestVisitService {
     InitiatePaymentResponse initiatePayment (PaymentRequest request, PaymentReason paymentReason);
 
     VisitResponse getVisitById (String visitId);
+
+    Page<VisitResponse> searchRequests(RequestVisitSearchRequest request, Pageable pageable);
 }

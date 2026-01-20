@@ -1,12 +1,9 @@
 package productservice.visit;
 
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.reflect.InitializerSignature;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import productservice.bookings.BookRoom;
-import productservice.bookings.dto.BookingSearchRequest;
 import productservice.bookings.dto.PaymentRequest;
 import productservice.mapper.VisitRequestMapper;
 import productservice.payment.PaymentService;
@@ -14,6 +11,8 @@ import productservice.payment.dto.InitiatePaymentResponse;
 import productservice.payment.enums.PaymentReason;
 import productservice.room.Room;
 import productservice.room.RoomRepository;
+import productservice.specifications.RequestVisitSpecification;
+import productservice.visit.dto.RequestVisitSearchRequest;
 import productservice.visit.dto.VisitRequest;
 import productservice.visit.dto.VisitResponse;
 
@@ -111,6 +110,26 @@ public class RequestVisitServiceImpl implements RequestVisitService {
 
         return mapper.toVisitResponse(visit);
 
+    }
+
+    @Override
+    public Page<VisitResponse> searchRequests(
+            RequestVisitSearchRequest request,
+            Pageable pageable
+    ) {
+        return visitRepository.findAll(RequestVisitSpecification.searchVisits(request),pageable)
+                .map(requestVisit -> VisitResponse.builder()
+                        .visitId(requestVisit.getId())
+                        .userId(requestVisit.getUserId())
+                        .orderTrackingId(requestVisit.getOrderTrackingId())
+                        .tenantName(requestVisit.getTenantName())
+                        .visitingTime(requestVisit.getTenantName())
+                        .visitingDate(requestVisit.getVisitingDate().toString())
+                        .noOfVisitors(requestVisit.getNoOfVisitors())
+                        .visitStatus(requestVisit.getStatus())
+                        .roomId(requestVisit.getRoom().getId())
+                        .notes(requestVisit.getNotes())
+                        .build());
     }
 
 

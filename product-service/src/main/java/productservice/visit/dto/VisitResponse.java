@@ -17,9 +17,9 @@ public record VisitResponse(
 
         String tenantName,
 
-        LocalDate visitingDate,
+        String visitingDate,
 
-        LocalTime visitingTime,
+        String visitingTime,
 
         int noOfVisitors,
 
