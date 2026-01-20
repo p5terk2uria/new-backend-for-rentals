@@ -1,9 +1,11 @@
 package authentication_service.user;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import authentication_service.user.dto.*;
+import authentication_service.user.enums.DomainRoles;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -59,6 +61,14 @@ public class UserManagementController {
         } else{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
+    }
+
+    @Hidden
+    @GetMapping("/get-users-by-role")
+    public ResponseEntity<List<UserData>> getUsersByRoles(
+            @RequestParam DomainRoles role)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(userManagementService.getUsersByRoles(role));
     }
 
 

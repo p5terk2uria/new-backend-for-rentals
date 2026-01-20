@@ -16,4 +16,6 @@ public interface RequestVisitService {
                            RequestVisit.RequestStatus desiredStatus);
 
     InitiatePaymentResponse initiatePayment (PaymentRequest request, PaymentReason paymentReason);
+
+    VisitResponse getVisitById (String visitId);
 }

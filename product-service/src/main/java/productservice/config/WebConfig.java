@@ -12,23 +12,28 @@ import productservice.roleutils.RoleInterceptor;
 public class WebConfig implements WebMvcConfigurer {
 
     private final RoleInterceptor roleInterceptor;
+    private final VideoConfig videoConfig;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(roleInterceptor)
-                .addPathPatterns("/**");
+                .addPathPatterns("/**")
+                .excludePathPatterns("/videos/**", "/images/**");
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
-        registry.addResourceHandler("/videos/rooms/**")
-                .addResourceLocations("file:videos/rooms/");
+        registry.addResourceHandler("/videos/videos/properties/**")
+                .addResourceLocations("file:" + videoConfig.getProperty().getVideos() + "/")
+                .setCachePeriod(3600);
 
-        registry.addResourceHandler("/videos/properties/**")
-                .addResourceLocations("file:videos/properties/");
+        registry.addResourceHandler("/videos/videos/rooms/**")
+                .addResourceLocations("file:" + videoConfig.getRoom().getVideos() + "/")
+                .setCachePeriod(3600);
 
-        registry.addResourceHandler("/images/roomspackage/**")
-                .addResourceLocations("file:images/roomspackage/");
+        registry.addResourceHandler("/videos/images/rooms/**")
+                .addResourceLocations("file:" + videoConfig.getRoom().getImages() + "/")
+                .setCachePeriod(3600);
     }
 }

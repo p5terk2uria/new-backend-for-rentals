@@ -33,9 +33,17 @@ public class RequestVisitController extends BaseController {
     @PostMapping("/pay-visit")
     public ResponseEntity<ApiResponse<?>> initiatePayment(@RequestBody PaymentRequest request,
                                                           @RequestParam PaymentReason paymentReason) {
-        InitiatePaymentResponse response=  requestVisitService.initiatePayment(request, paymentReason);
+        InitiatePaymentResponse response = requestVisitService.initiatePayment(request, paymentReason);
         return ResponseEntity.ok(success(response));
 
+    }
+
+    @GetMapping("/get-visit-entity-by-id")
+    public ResponseEntity<ApiResponse<?>> getVisitEntityById(
+            @RequestParam String visitId
+    ) {
+        return ResponseEntity.ok(success(
+                "success", requestVisitService.getVisitById(visitId)));
     }
 
     @PutMapping("/update-status")
@@ -49,6 +57,8 @@ public class RequestVisitController extends BaseController {
         requestVisitService.updateVisitStatus(userId, visitId, currentStatus, desiredStatus);
         return ResponseEntity.ok(success("status updated successfully"));
     }
+
+
 
 
 }

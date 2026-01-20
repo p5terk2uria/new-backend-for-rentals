@@ -6,6 +6,7 @@ import productservice.feignclients.authentication.AuthenticationClient;
 import productservice.feignclients.authentication.UserData;
 import productservice.visit.RequestVisit;
 import productservice.visit.dto.VisitRequest;
+import productservice.visit.dto.VisitResponse;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,6 +39,22 @@ public class VisitRequestMapper {
                 .notes(request.notes())
                 .build();
 
+    }
+
+    public VisitResponse toVisitResponse(RequestVisit visit) {
+
+        return VisitResponse.builder()
+                .visitId(visit.getId())
+                .userId(visit.getUserId())
+                .orderTrackingId(visit.getOrderTrackingId())
+                .tenantName(visit.getTenantName())
+                .visitingDate(visit.getVisitingDate())
+                .visitingTime(visit.getVisitingTime())
+                .noOfVisitors(visit.getNoOfVisitors())
+                .visitStatus(visit.getStatus())
+                .notes(visit.getNotes())
+                .roomId(visit.getRoom().getId())
+                .build();
     }
 
 }

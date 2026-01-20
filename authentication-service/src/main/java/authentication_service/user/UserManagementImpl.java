@@ -2,6 +2,7 @@ package authentication_service.user;
 
 import authentication_service.user.config.SecurityConfig;
 import authentication_service.user.dto.*;
+import authentication_service.user.enums.DomainRoles;
 import authentication_service.user.enums.UserManagementRepository;
 import authentication_service.user.location.LocationDetails;
 import authentication_service.user.location.LocationRepository;
@@ -9,6 +10,8 @@ import de.mkammerer.argon2.Argon2Factory;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -121,6 +124,21 @@ public class UserManagementImpl implements UserManagementService {
             );
 
         }
+    }
+
+
+    @Override
+    public List<UserData> getUsersByRoles(DomainRoles roles) {
+
+        List<User> users = userManagementRepository.findByRole(roles)
+                .orElse(null);
+        assert users != null;
+        return users.stream()
+                .map(user -> {
+                    LocationDetails location = locationRepository.findByUser(user)
+                            .orElse(null);
+                    return userMapper.toUserData(user, location);
+                }).toList();
     }
 
 

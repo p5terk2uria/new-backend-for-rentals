@@ -2,7 +2,11 @@ package productservice.visit;
 
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.reflect.InitializerSignature;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import productservice.bookings.BookRoom;
+import productservice.bookings.dto.BookingSearchRequest;
 import productservice.bookings.dto.PaymentRequest;
 import productservice.mapper.VisitRequestMapper;
 import productservice.payment.PaymentService;
@@ -95,6 +99,21 @@ public class RequestVisitServiceImpl implements RequestVisitService {
         return paymentService.initiatePayment(request, PaymentReason.VISIT);
 
     }
+
+    /**
+     */
+    @Override
+    public VisitResponse getVisitById(String visitId) {
+
+        RequestVisit visit = visitRepository.findById(visitId)
+                .orElseThrow(() -> new RuntimeException("Visit request not found for this entity"));
+
+
+        return mapper.toVisitResponse(visit);
+
+    }
+
+
 
 
 }

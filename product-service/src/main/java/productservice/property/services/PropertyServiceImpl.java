@@ -21,6 +21,7 @@ import productservice.property.entities.RoomBills;
 import productservice.property.repository.AmenitiesRepository;
 import productservice.property.repository.BillsRepository;
 import productservice.property.repository.PropertyRepository;
+import productservice.room.Room;
 import productservice.room.RoomRepository;
 import productservice.room.dto.RoomResponse;
 import productservice.specifications.PropertySpecification;
@@ -30,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -95,21 +97,45 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public String savePropertyVideo(MultipartFile file) throws IOException {
-        return saveFile(file, videoConfig.getProperty().getVideos());
+        return saveFile(file, videoConfig.getProperty().getVideos(), "videos/properties");
     }
 
     @Override
     public String saveRoomVideo(MultipartFile file) throws IOException {
-        return saveFile(file, videoConfig.getRoom().getVideos());
+        return saveFile(file, videoConfig.getRoom().getVideos(), "videos/rooms");
     }
 
     @Override
     public Set<String> saveRoomImages(MultipartFile[] files) throws IOException {
-        return saveFiles(files, videoConfig.getRoom().getImages());
+        return saveFiles(files, videoConfig.getRoom().getImages(), "images/rooms");
     }
 
+    /**
+     * @param roles 
+     * @return
+     */
+    @Override
+    public List<UserData> getUsersByDomainRoles(DomainRoles roles) {
+        return client.getUsersByDomainRole(roles);
+    }
 
-    private String saveFile(MultipartFile file, String folder) throws IOException {
+    /**
+     * @param roomId 
+     * @return
+     */
+    @Override
+    public RoomResponse getRoomById(String roomId) {
+        Room room = roomRepository.findById(roomId).
+                orElseThrow(() ->new RuntimeException("Room not found fot this id"));
+
+        RoomBills bills = billsRepository.findRoomBillsByRoomId(roomId)
+                .orElse(null);
+
+        return propertyMapper.toRoomResponse(room,bills);
+
+    }
+
+    private String saveFile(MultipartFile file, String folder, String urlPath) throws IOException {
         if (file == null || file.isEmpty()) return null;
 
         Path folderPath = Paths.get(folder).toAbsolutePath();
@@ -120,19 +146,10 @@ public class PropertyServiceImpl implements PropertyService {
 
         file.transferTo(targetPath.toFile());
 
-        if (folder.startsWith("/home/dev/files/videos/")) {
-            String subFolder = folderPath.getFileName().toString();
-            return videoConfig.getBaseUrl() + subFolder + "/" + fileName;
-        } else if (folder.startsWith("/home/dev/files/images/")) {
-            String subFolder = folderPath.getFileName().toString();
-            return "/images/" + subFolder + "/" + fileName;
-        }
-
-        return "/" + folderPath.getFileName() + "/" + fileName;
+        return videoConfig.getBaseUrl() + urlPath + "/" + fileName;
     }
 
-
-    private Set<String> saveFiles(MultipartFile[] files, String folder) throws IOException {
+    private Set<String> saveFiles(MultipartFile[] files, String folder, String urlPath) throws IOException {
         if (files == null || files.length == 0) {
             return Set.of();
         }
@@ -140,22 +157,18 @@ public class PropertyServiceImpl implements PropertyService {
         return Arrays.stream(files)
                 .map(file -> {
                     try {
-                        return saveFile(file, folder);
+                        return saveFile(file, folder, urlPath);
                     } catch (IOException e) {
-                        throw new RuntimeException("Failed to save file", e);
+                        throw new RuntimeException("Failed to save file: " + file.getOriginalFilename(), e);
                     }
                 })
                 .collect(Collectors.toSet());
     }
 
-
-
     private String generateFileName(String originalFileName) {
-
         if (originalFileName == null) {
             return UUID.randomUUID().toString();
         }
         return UUID.randomUUID() + "_" + originalFileName.replaceAll("\\s+", "_");
     }
-
 }

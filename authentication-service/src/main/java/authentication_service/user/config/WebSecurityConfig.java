@@ -21,6 +21,7 @@ public class WebSecurityConfig {
                                 "/authentication/register",
                                 "/authentication/validate-token",
                                 "/authentication/feign/**",
+                                "/authentication/get-users-by-role",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**"
                         ).permitAll()

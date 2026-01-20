@@ -6,12 +6,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import productservice.config.ApiResponse;
 import productservice.config.BaseController;
+import productservice.feignclients.authentication.UserData;
+import productservice.payment.dto.DomainRoles;
 import productservice.property.dto.PropertyRequest;
 import productservice.property.dto.PropertyResponse;
 import productservice.property.dto.PropertySearchRequest;
@@ -20,9 +23,11 @@ import productservice.property.enums.HouseType;
 import productservice.room.RoomService;
 import productservice.room.dto.RoomRequest;
 import productservice.property.services.PropertyService;
+import productservice.room.dto.RoomResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -103,6 +108,14 @@ public class ProductController extends BaseController {
         return ResponseEntity.ok(success("Room created successfully"));
     }
 
+    @GetMapping("/get-room-by-id")
+    public ResponseEntity<ApiResponse<?>> getRoomById (
+            @RequestParam String roomId
+    ){
+        RoomResponse response = propertyService.getRoomById(roomId);
+        return ResponseEntity.ok(success("success",response));
+    }
+
     @PostMapping(value = "/upload-room-media", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<?>> uploadVideoImage(
             @RequestParam String roomId,
@@ -123,6 +136,13 @@ public class ProductController extends BaseController {
     ) {
         roomService.updateRoomStatus(roomId, newStatus);
         return ResponseEntity.ok(success("success"));
+    }
+
+    @GetMapping("/get-users-by-role")
+    public ResponseEntity<List<UserData>> getUsersByRoles(
+            @RequestParam DomainRoles role)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(propertyService.getUsersByDomainRoles(role));
     }
 
 }

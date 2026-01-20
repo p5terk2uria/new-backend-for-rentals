@@ -2,6 +2,8 @@ package productservice.bookings;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import productservice.bookings.dto.*;
 import productservice.externalApIs.PesaPalConfigurations;
@@ -15,6 +17,7 @@ import productservice.payment.enums.PaymentStatus;
 import productservice.pesapal.PesaPal;
 import productservice.room.Room;
 import productservice.room.RoomRepository;
+import productservice.specifications.BookingSpecification;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -64,7 +67,9 @@ public class BookServiceImpl implements BookingService {
                 bookRoom1.getId(),
                 bookRoom1.getUserId(),
                 bookRoom1.getRoom().getId(),
-                bookRoom1.getHouseBill()
+                bookRoom1.getHouseBill(),
+                bookRoom1.getBookingDate(),
+                null
         );
 
     }
@@ -128,6 +133,47 @@ public class BookServiceImpl implements BookingService {
 
         log.info("Submitting request to PesaPal: {} with amount {}", submitRequest, request.amount());
         return pesaPal.submitOrderRequest(submitRequest);
+    }
+
+    /**
+     * @param bookRoomId 
+     * @return
+     */
+    @Override
+    public BookingResponse getBookingRequestById(String bookRoomId) {
+
+        BookRoom bookRoom = bookRoomRepository.findById(bookRoomId)
+                .orElseThrow(() -> new RuntimeException("Book entity not found for this id "));
+
+        return BookingResponse.builder()
+                .orderTrackingId(bookRoom.getOrderTrackingId())
+                .bookRoomId(bookRoom.getRoom().getId())
+                .userId(bookRoom.getUserId())
+                .amount(bookRoom.getHouseBill())
+                .amount(bookRoom.getHouseBill())
+                .bookingDate(bookRoom.getBookingDate())
+                .bookingStatus(bookRoom.getBookingStatus())
+                .build();
+
+    }
+
+    @Override
+    public Page<BookingResponse> searchBookings(
+            BookingSearchRequest request,
+            Pageable pageable
+    ) {
+
+        return bookRoomRepository
+                .findAll(BookingSpecification.searchBookings(request), pageable)
+                .map(bookRoom -> BookingResponse.builder()
+                        .bookRoomId(bookRoom.getId())
+                        .orderTrackingId(bookRoom.getOrderTrackingId())
+                        .userId(bookRoom.getUserId())
+                        .roomId(bookRoom.getRoom().getId())
+                        .amount(bookRoom.getHouseBill())
+                        .bookingDate(bookRoom.getBookingDate())
+                        .bookingStatus(bookRoom.getBookingStatus())
+                        .build());
     }
 
 
