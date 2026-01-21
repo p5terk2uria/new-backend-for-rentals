@@ -87,11 +87,6 @@ public class RequestVisitServiceImpl implements RequestVisitService {
         visitRepository.save(visit);
     }
 
-    /**
-     * @param request
-     * @param paymentReason
-     * @return
-     */
     @Override
     public InitiatePaymentResponse initiatePayment(PaymentRequest request, PaymentReason paymentReason) {
 

@@ -63,7 +63,7 @@ public class BookServiceImpl implements BookingService {
                 .bookingStatus(BookingStatus.UNBOOKED)
                 .orderTrackingId("ORDER" + UUID.randomUUID() + "_" + System.currentTimeMillis())
                 .userId(request.userId())
-                .houseBill(room.getRoomBills().getHouseBill())
+                .houseBill(room.getHouseBill())
                 .build();
 
         BookRoom bookRoom1 = bookRoomRepository.save(bookRoom);
