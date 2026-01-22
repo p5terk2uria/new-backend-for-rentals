@@ -6,6 +6,10 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/gateway/StockManager.gateway.test.iml" filepath="$PROJECT_DIR$/.idea/modules/gateway/StockManager.gateway.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/notification-service/StockManager.notification-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/notification-service/StockManager.notification-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/product-service/StockManager.product-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/product-service/StockManager.product-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/StockManager.services.iml" filepath="$PROJECT_DIR$/.idea/modules/services/StockManager.services.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/StockManager.services.main.iml" filepath="$PROJECT_DIR$/.idea/modules/services/StockManager.services.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/StockManager.services.test.iml" filepath="$PROJECT_DIR$/.idea/modules/services/StockManager.services.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services.main.iml" filepath="$PROJECT_DIR$/.idea/modules/services.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/authentication-service/stock.management.StockManager.authentication-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/authentication-service/stock.management.StockManager.authentication-service.main.iml" />
     </modules>
   </component>

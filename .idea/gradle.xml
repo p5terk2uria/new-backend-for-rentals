@@ -13,7 +13,6 @@
             <option value="$PROJECT_DIR$/authentication-service" />
             <option value="$PROJECT_DIR$/notification-service" />
             <option value="$PROJECT_DIR$/product-service" />
-            <option value="$PROJECT_DIR$/services" />
           </set>
         </option>
       </GradleProjectSettings>
