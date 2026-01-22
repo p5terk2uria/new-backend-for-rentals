@@ -128,11 +128,16 @@ public class PropertyServiceImpl implements PropertyService {
         Room room = roomRepository.findById(roomId).
                 orElseThrow(() ->new RuntimeException("Room not found fot this id"));
 
+        Property property = propertyRepository.findById(room.getProperty().getId())
+                .orElse(null);
+
         RoomBills bills = billsRepository.findRoomBillsByRoomId(roomId)
                 .orElse(null);
 
-        return propertyMapper.toRoomResponse(room,bills);
-
+      return propertyMapper.toRoomResponse(room, bills)
+                .toBuilder()
+                .propertyName(property != null ? property.getPropertyName() : null)
+                .build();
     }
 
     private String saveFile(MultipartFile file, String folder, String urlPath) throws IOException {

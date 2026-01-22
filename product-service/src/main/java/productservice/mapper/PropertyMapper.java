@@ -32,6 +32,7 @@ public class PropertyMapper {
                 room.getId(),
                 room.getHouseType(),
                 room.getRoomNo(),
+                null,
                 room.isVacant(),
                 bills != null ? bills.getHouseBill() : null,
                 bills != null ? bills.getWaterBill() : null,
