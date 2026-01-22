@@ -26,6 +26,8 @@ public class Room {
     @Enumerated(EnumType.STRING)
     private HouseType houseType;
 
+    private String roomNo;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private RoomBills roomBills;
 

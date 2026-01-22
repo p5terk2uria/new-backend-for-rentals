@@ -16,6 +16,7 @@ public class RoomMapper {
                 .imageUrls(request.imageUrls())
                 .videoUrl(request.videoLink())
                 .houseType(request.houseType())
+                .roomNo(request.roomNo())
                 .vacant(true)
                 .build();
     }

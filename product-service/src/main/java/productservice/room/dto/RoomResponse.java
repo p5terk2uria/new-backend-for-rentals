@@ -8,6 +8,8 @@ public record RoomResponse(
 
         HouseType roomType,
 
+        String roomNo,
+
         boolean vacant,
 
         String houseBill,
