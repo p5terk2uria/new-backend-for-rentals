@@ -32,6 +32,7 @@ public class VisitRequestMapper {
 
         return RequestVisit.builder()
                 .tenantName(tenantName)
+                .phoneNumber(userData.phoneNumber())
                 .userId(userData.id())
                 .visitingDate(request.visitingDate())
                 .visitingTime(request.visitingTime())

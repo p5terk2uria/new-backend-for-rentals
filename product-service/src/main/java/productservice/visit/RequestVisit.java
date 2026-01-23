@@ -26,6 +26,8 @@ public class RequestVisit {
 
     private String tenantName;
 
+    private String phoneNumber;
+
     private LocalDate visitingDate;
 
     private LocalTime visitingTime;

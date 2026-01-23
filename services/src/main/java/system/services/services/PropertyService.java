@@ -13,4 +13,6 @@ public interface PropertyService {
     List<ServiceResponse> getAllServices();
 
 
+
+
 }

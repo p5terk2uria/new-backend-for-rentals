@@ -118,11 +118,12 @@ public class RequestVisitServiceImpl implements RequestVisitService {
                         .userId(requestVisit.getUserId())
                         .orderTrackingId(requestVisit.getOrderTrackingId())
                         .tenantName(requestVisit.getTenantName())
-                        .visitingTime(requestVisit.getTenantName())
+                        .phoneNumber(requestVisit.getPhoneNumber())
+                        .visitingTime(requestVisit.getVisitingTime().toString())
                         .visitingDate(requestVisit.getVisitingDate().toString())
                         .noOfVisitors(requestVisit.getNoOfVisitors())
                         .visitStatus(requestVisit.getStatus())
-                        .roomId(requestVisit.getRoom().getId())
+                        .roomId(requestVisit.getRoom() != null ? requestVisit.getRoom().getId() : null)
                         .notes(requestVisit.getNotes())
                         .build());
     }

@@ -25,7 +25,7 @@ public class UserManagementImpl implements UserManagementService {
 
 
     @Override
-    public void registerUser(RegisterRequest request) {
+    public String registerUser(RegisterRequest request) {
 
         User newUser = RegisterRequest.toUserTable(request);
 
@@ -39,6 +39,11 @@ public class UserManagementImpl implements UserManagementService {
             LocationDetails details = LocationDetailsRequest.toLocationEntity(request.locationDetails());
             details.setUser(savedUser);
             locationRepository.save(details);
+        }
+        if(savedUser.getRole() == DomainRoles.SERVICE_PROVIDER){
+            return savedUser.getId();
+        } else {
+            return "User created successfully";
         }
 
     }

@@ -21,6 +21,10 @@ public class BookRoom {
 
     private String userId;
 
+    private String userName;
+
+    private String phoneNumber;
+
     private LocalDate bookingDate;
 
     private String orderTrackingId;

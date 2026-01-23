@@ -36,6 +36,13 @@ spring:
             - Path=/api/products/**
           filters:
             - AuthenticationFilter
+        #Services
+        - id: services
+          uri: http://localhost:8334
+          predicates:
+            - Path=/api/services/**
+          filters:
+            - AuthenticationFilter
 
 
 gateway:

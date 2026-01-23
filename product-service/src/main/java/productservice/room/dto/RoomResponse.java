@@ -13,6 +13,8 @@ public record RoomResponse(
 
         String propertyName,
 
+        String propertyLocation,
+
         boolean vacant,
 
         String houseBill,

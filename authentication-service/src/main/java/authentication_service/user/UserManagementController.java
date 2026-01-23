@@ -22,12 +22,12 @@ public class UserManagementController {
     private final UserManagementService userManagementService;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> registerUser(@RequestBody RegisterRequest request) {
+    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request) {
         userManagementService.registerUser(request);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "User registered successfully");
+        String response = userManagementService.registerUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {

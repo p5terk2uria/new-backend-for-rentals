@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface UserManagementService {
 
-    void registerUser(RegisterRequest request);
+    String registerUser(RegisterRequest request);
 
     LoginResponse login(LoginRequest request);
 

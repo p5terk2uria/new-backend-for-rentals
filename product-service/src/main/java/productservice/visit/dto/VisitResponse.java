@@ -17,6 +17,8 @@ public record VisitResponse(
 
         String tenantName,
 
+        String phoneNumber,
+
         String visitingDate,
 
         String visitingTime,

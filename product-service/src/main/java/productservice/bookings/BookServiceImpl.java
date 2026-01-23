@@ -64,6 +64,8 @@ public class BookServiceImpl implements BookingService {
                 .orderTrackingId("ORDER" + UUID.randomUUID() + "_" + System.currentTimeMillis())
                 .userId(request.userId())
                 .houseBill(room.getHouseBill())
+                .userName(user.firstName() + " " + user.lastName())
+                .userName(user.phoneNumber())
                 .build();
 
         BookRoom bookRoom1 = bookRoomRepository.save(bookRoom);
@@ -71,6 +73,8 @@ public class BookServiceImpl implements BookingService {
                 bookRoom1.getOrderTrackingId(),
                 bookRoom1.getId(),
                 bookRoom1.getUserId(),
+                null,
+                null,
                 bookRoom1.getRoom().getId(),
                 bookRoom1.getHouseBill(),
                 bookRoom1.getBookingDate(),
@@ -174,6 +178,8 @@ public class BookServiceImpl implements BookingService {
                         .bookRoomId(bookRoom.getId())
                         .orderTrackingId(bookRoom.getOrderTrackingId())
                         .userId(bookRoom.getUserId())
+                        .userName(bookRoom.getUserName())
+                        .phoneNumber(bookRoom.getPhoneNumber())
                         .roomId(bookRoom.getRoom().getId())
                         .amount(bookRoom.getHouseBill())
                         .bookingDate(bookRoom.getBookingDate())

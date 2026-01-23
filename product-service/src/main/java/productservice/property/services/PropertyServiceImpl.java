@@ -111,7 +111,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     /**
-     * @param roles 
+     * @param roles
      * @return
      */
     @Override
@@ -120,13 +120,13 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     /**
-     * @param roomId 
+     * @param roomId
      * @return
      */
     @Override
     public RoomResponse getRoomById(String roomId) {
         Room room = roomRepository.findById(roomId).
-                orElseThrow(() ->new RuntimeException("Room not found fot this id"));
+                orElseThrow(() -> new RuntimeException("Room not found fot this id"));
 
         Property property = propertyRepository.findById(room.getProperty().getId())
                 .orElse(null);
@@ -134,9 +134,10 @@ public class PropertyServiceImpl implements PropertyService {
         RoomBills bills = billsRepository.findRoomBillsByRoomId(roomId)
                 .orElse(null);
 
-      return propertyMapper.toRoomResponse(room, bills)
+        return propertyMapper.toRoomResponse(room, bills)
                 .toBuilder()
                 .propertyName(property != null ? property.getPropertyName() : null)
+                .propertyLocation(property != null ? property.getPropertyLocation() : null)
                 .build();
     }
 

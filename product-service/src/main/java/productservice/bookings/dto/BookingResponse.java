@@ -11,6 +11,8 @@ public record BookingResponse(
         String orderTrackingId,
         String bookRoomId,
         String userId,
+        String userName,
+        String phoneNumber,
         String roomId,
         String amount,
         LocalDate bookingDate,

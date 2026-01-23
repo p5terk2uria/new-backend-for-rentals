@@ -1,11 +1,9 @@
 package system.services.services;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+import system.services.services.dto.AttendanceStatus;
 
 @Entity
 @AllArgsConstructor
@@ -22,5 +20,10 @@ public class Services {
     private String serviceName;
 
     private String description;
+
+    private int dateRequested;
+
+    @Enumerated(EnumType.STRING)
+    private AttendanceStatus attendanceStatus;
 
 }

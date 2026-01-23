@@ -33,9 +33,6 @@ public class RoomServiceImpl implements RoomService{
         room.setImageUrls(imageLinks);
         roomRepository.save(room);
 
-        log.error("Saving  room {}", request);
-        log.error ("saving a room {} and room image {}", room.getVideoUrl(), room.getImageUrls());
-
         billsRepository.save(roomMapper.toRoomBills(request, room));
     }
 
