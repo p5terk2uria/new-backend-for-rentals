@@ -9,7 +9,7 @@ import system.services.services.dto.ServiceRequest;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/service")
+@RequestMapping("api/services")
 public class ServicesController extends BaseController {
 
     private final PropertyService propertyServices;

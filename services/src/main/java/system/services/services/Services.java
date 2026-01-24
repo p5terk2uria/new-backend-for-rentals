@@ -21,9 +21,4 @@ public class Services {
 
     private String description;
 
-    private int dateRequested;
-
-    @Enumerated(EnumType.STRING)
-    private AttendanceStatus attendanceStatus;
-
 }

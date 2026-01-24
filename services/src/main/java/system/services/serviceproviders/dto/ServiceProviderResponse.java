@@ -1,6 +1,7 @@
-package system.services.serviceproviders.enums;
+package system.services.serviceproviders.dto;
 
 import lombok.Builder;
+import system.services.serviceproviders.enums.AvailableStatus;
 
 @Builder(toBuilder = true)
 public record ServiceProviderResponse (

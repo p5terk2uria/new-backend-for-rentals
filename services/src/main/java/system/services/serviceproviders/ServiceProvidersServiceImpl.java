@@ -8,8 +8,8 @@ import system.services.feignclients.authentication.AuthenticationClient;
 import system.services.feignclients.authentication.UserData;
 import system.services.serviceproviders.enums.AvailableStatus;
 import system.services.serviceproviders.enums.DomainRoles;
-import system.services.serviceproviders.enums.ServiceProviderRequest;
-import system.services.serviceproviders.enums.ServiceProviderResponse;
+import system.services.serviceproviders.dto.ServiceProviderRequest;
+import system.services.serviceproviders.dto.ServiceProviderResponse;
 import system.services.services.PropertyServiceRepository;
 import system.services.services.Services;
 

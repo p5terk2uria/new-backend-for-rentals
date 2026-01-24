@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import system.services.config.ApiResponse;
 import system.services.config.BaseController;
 import system.services.serviceproviders.enums.AvailableStatus;
-import system.services.serviceproviders.enums.ServiceProviderRequest;
+import system.services.serviceproviders.dto.ServiceProviderRequest;
 
 @RestController
 @RequiredArgsConstructor

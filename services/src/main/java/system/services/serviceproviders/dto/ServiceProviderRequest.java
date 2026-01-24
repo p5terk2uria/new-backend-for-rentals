@@ -1,7 +1,8 @@
-package system.services.serviceproviders.enums;
+package system.services.serviceproviders.dto;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Builder;
+import system.services.serviceproviders.enums.AvailableStatus;
 
 @Builder(toBuilder = true)
 public record ServiceProviderRequest (

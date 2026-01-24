@@ -3,8 +3,8 @@ package system.services.serviceproviders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import system.services.serviceproviders.enums.AvailableStatus;
-import system.services.serviceproviders.enums.ServiceProviderRequest;
-import system.services.serviceproviders.enums.ServiceProviderResponse;
+import system.services.serviceproviders.dto.ServiceProviderRequest;
+import system.services.serviceproviders.dto.ServiceProviderResponse;
 
 
 public interface ServiceProviderService {

@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import lombok.*;
 import system.services.serviceproviders.enums.AvailableStatus;
 
+import java.math.BigDecimal;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,6 +30,8 @@ public class ServiceProvider {
     private String serviceId;
 
     private String location;
+
+    private BigDecimal balance;
 
     @Enumerated(EnumType.STRING)
     private AvailableStatus availability;
