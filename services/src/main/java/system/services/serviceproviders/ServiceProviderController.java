@@ -24,7 +24,7 @@ public class ServiceProviderController extends BaseController {
         return ResponseEntity.ok(success("service provider onboarded successfully"));
     }
 
-    @PostMapping("/get-providers-by-service")
+    @GetMapping("/get-providers-by-service")
     public ResponseEntity<ApiResponse<?>> searchProvidersByService(
             @RequestParam String serviceId,
             Pageable pageable
@@ -33,7 +33,7 @@ public class ServiceProviderController extends BaseController {
         return ResponseEntity.ok(success("Services fetched", response));
     }
 
-    @PostMapping("/update-service-provider-availability")
+    @PatchMapping("/update-service-provider-availability")
     public ResponseEntity<ApiResponse<?>> updateServiceProviderAvailability(
             @RequestParam String serviceId,
             @RequestParam AvailableStatus availableStatus
