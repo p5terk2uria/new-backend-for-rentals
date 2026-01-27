@@ -4,5 +4,6 @@ public enum AvailableStatus {
 
     AVAILABLE,
     OCCUPIED,
-    INACTIVE
+    INACTIVE,
+    PENDING
 }

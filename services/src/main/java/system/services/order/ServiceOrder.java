@@ -3,7 +3,6 @@ package system.services.order;
 import jakarta.persistence.*;
 import lombok.*;
 import system.services.order.enums.OrderStatus;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -21,6 +20,8 @@ public class ServiceOrder {
     private String userId;
 
     private String serviceId;
+
+    private String serviceName;
 
     private String serviceProviderId;
 

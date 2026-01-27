@@ -1,15 +1,18 @@
 package system.services.order;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import system.services.ServiceOrderSpecification;
 import system.services.mapper.OrderServiceMapper;
-import system.services.order.dto.AttachOrderRequest;
-import system.services.order.dto.RequestServiceRequest;
+import system.services.order.dto.*;
+import system.services.order.enums.OrderStatus;
 import system.services.serviceproviders.ServiceProvider;
 import system.services.serviceproviders.ServiceProviderRepository;
 import system.services.serviceproviders.enums.AvailableStatus;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
         if (request.serviceProviderId() != null) {
             serviceOrder.setServiceProviderId(request.serviceProviderId());
         }
+        serviceOrder.setOrderStatus(OrderStatus.IN_PROGRESS);
         orderServiceRepository.save(serviceOrder);
 
         return serviceOrder.getOrderId();
@@ -54,5 +58,26 @@ public class OrderServiceImpl implements OrderService {
         order.setServiceProviderId(request.serviceProvideId());
         orderServiceRepository.save(order);
         return "success";
+    }
+
+
+    @Override
+    public List<OrderServiceResponse> searchOrderService(OrderSearchRequest request, Pageable pageable) {
+
+        var spec = ServiceOrderSpecification.search(request);
+
+        return orderServiceRepository.findAll(spec, pageable)
+                .map(orderServiceMapper::toOrderResponse).getContent();
+
+    }
+
+    @Override
+    public List<AdminOrderResponse> searchAdminOrderService(OrderSearchRequest request, Pageable pageable) {
+
+        var spec = ServiceOrderSpecification.search(request);
+
+        return orderServiceRepository.findAll(spec, pageable)
+                .map(orderServiceMapper::toAdminOrderResponse).getContent();
+
     }
 }
