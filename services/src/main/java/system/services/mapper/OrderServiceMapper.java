@@ -8,6 +8,8 @@ import system.services.order.dto.OrderServiceResponse;
 import system.services.order.dto.RequestServiceRequest;
 import system.services.order.dto.RequestServiceResponse;
 import system.services.order.enums.OrderStatus;
+import system.services.serviceproviders.ServiceProvider;
+import system.services.serviceproviders.dto.ServiceProviderResponse;
 
 import java.math.BigDecimal;
 
@@ -46,6 +48,21 @@ public class OrderServiceMapper {
         );
     }
 
+    public ServiceProviderResponse toServiceProviderResponse(ServiceProvider provider) {
+        return ServiceProviderResponse.builder()
+                .id(provider.getId())
+                .name(provider.getName())
+                .phoneNumber(provider.getPhoneNumber())
+                .serviceName(provider.getServiceName())
+                .serviceId(provider.getServiceId())
+                .location(provider.getLocation())
+                .balance(provider.getBalance())
+                .orderTrackingId(provider.getOrderTrackingId())
+                .email(provider.getEmail())
+                .availableStatus(provider.getAvailability())
+                .build();
+    }
+
     public OrderServiceResponse toOrderResponse(ServiceOrder serviceOrder) {
 
         BigDecimal deductedBudget = serviceOrder.getBudget()
@@ -62,7 +79,8 @@ public class OrderServiceMapper {
                 .budget(deductedBudget)
                 .build();
     }
-    public AdminOrderResponse toAdminOrderResponse (ServiceOrder serviceOrder) {
+
+    public AdminOrderResponse toAdminOrderResponse(ServiceOrder serviceOrder) {
 
         return AdminOrderResponse.builder()
                 .id(serviceOrder.getId())

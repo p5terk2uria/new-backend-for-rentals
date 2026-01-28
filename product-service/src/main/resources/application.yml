@@ -59,8 +59,8 @@ gateway:
   secret: "Gv7kR2t0eJ0mQyqB1T8Vw3C4Z9lFh2rPp8bK0sXq7Jt4Wm9eD3Fq6Yv1Nn5Rc8Zd"
 
 bookings:
-  booking-fee: 5
   visit-fee: 1
+  service-provider-onboarding-fee: 10
 
 mpesa:
   business-shortcode: 174379
@@ -84,5 +84,8 @@ pesapal:
   redirect-mode: ""
   ipn-url: https://brittani-isoglossal-suavely.ngrok-free.dev/api/products/payment/callback
   ipn-registration-url: https://pay.pesapal.com/v3/api/URLSetup/RegisterIPN
+
+country:
+  code : KES
 
 

@@ -9,6 +9,8 @@ public record PaymentRequest(
 
         String userId,
 
+        String serviceProviderId,
+
         String visitId,
 
         String bookRoomId,

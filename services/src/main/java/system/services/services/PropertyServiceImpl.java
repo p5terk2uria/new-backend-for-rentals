@@ -1,12 +1,13 @@
 package system.services.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import system.services.services.dto.ServiceRequest;
 import system.services.services.dto.ServiceResponse;
 
 import java.util.List;
 
-@org.springframework.stereotype.Service
+@Service
 @RequiredArgsConstructor
 public class PropertyServiceImpl implements PropertyService {
 

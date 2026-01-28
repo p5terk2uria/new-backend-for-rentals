@@ -25,6 +25,8 @@ public class ServiceProvider {
 
     private String phoneNumber;
 
+    private String email;
+
     private String serviceName;
 
     private String serviceId;
@@ -32,6 +34,8 @@ public class ServiceProvider {
     private String location;
 
     private BigDecimal balance;
+
+    private String orderTrackingId;
 
     @Enumerated(EnumType.STRING)
     private AvailableStatus availability;

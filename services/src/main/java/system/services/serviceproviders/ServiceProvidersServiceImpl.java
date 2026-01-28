@@ -10,6 +10,7 @@ import system.services.bidorder.ServiceOrderBid;
 import system.services.bidorder.ServiceOrderBidRepository;
 import system.services.feignclients.authentication.AuthenticationClient;
 import system.services.feignclients.authentication.UserData;
+import system.services.mapper.OrderServiceMapper;
 import system.services.order.OrderServiceRepository;
 import system.services.serviceproviders.enums.AvailableStatus;
 import system.services.serviceproviders.enums.DomainRoles;
@@ -35,6 +36,8 @@ public class ServiceProvidersServiceImpl implements ServiceProviderService {
 
     private final ServiceOrderBidRepository bidRepository;
 
+    private final OrderServiceMapper orderServiceMapper;
+
     /**
      *
      */
@@ -53,15 +56,19 @@ public class ServiceProvidersServiceImpl implements ServiceProviderService {
         Services services = serviceRepository.findById(request.serviceId())
                 .orElseThrow(() -> new RuntimeException("Service not found with this id"));
 
+        String orderTrackingId = "ORDER"+ System.currentTimeMillis();
+
         ServiceProvider provider = ServiceProvider.builder()
                 .id(userData.id())
                 .name(userData.firstName() + " " + userData.lastName())
                 .phoneNumber(userData.phoneNumber())
+                .email(userData.emailAddress())
                 .serviceId(services.getId())
                 .location(userData.city())
                 .serviceName(services.getServiceName().trim())
                 .balance(BigDecimal.ZERO)
                 .availability(AvailableStatus.PENDING)
+                .orderTrackingId(orderTrackingId)
                 .build();
 
         providerRepository.save(provider);
@@ -133,6 +140,23 @@ public class ServiceProvidersServiceImpl implements ServiceProviderService {
         }
         provider.setAvailability(availableStatus);
         providerRepository.save(provider);
+
+    }
+
+    @Override
+    public ServiceProviderResponse findServiceProviderById(String providerId) {
+
+        var serviceProvider = providerRepository.findById(providerId)
+                .orElseThrow(()-> new RuntimeException("Service provider not found for this id"));
+        return orderServiceMapper.toServiceProviderResponse(serviceProvider);
+    }
+
+    @Override
+    public ServiceProviderResponse findServiceProviderByOrderTrackingId(String orderTrackingId) {
+
+        var serviceProvider = providerRepository.findByOrderTrackingId(orderTrackingId)
+                .orElseThrow(() -> new RuntimeException("service provider not found for this id"));
+        return orderServiceMapper.toServiceProviderResponse(serviceProvider);
 
     }
 

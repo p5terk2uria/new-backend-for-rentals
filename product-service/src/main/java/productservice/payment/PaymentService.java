@@ -12,4 +12,7 @@ public interface PaymentService {
     InitiatePaymentResponse initiatePayment (PaymentRequest request, PaymentReason paymentReason);
 
     String recordRequestVisitCallBack(CallBackResponse response);
+
+    InitiatePaymentResponse initiateCommissionPayment (PaymentRequest request, PaymentReason reason);
+
 }

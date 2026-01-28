@@ -2,5 +2,7 @@ package productservice.payment.enums;
 
 public enum PaymentReason {
     VISIT,
-    BOOKING
+    BOOKING,
+    ONBOARDING_COMMISSION,
+    SERVICE_PAYMENT
 }

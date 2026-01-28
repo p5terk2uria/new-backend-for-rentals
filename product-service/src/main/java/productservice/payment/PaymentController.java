@@ -51,4 +51,13 @@ public class PaymentController extends BaseController {
         return ResponseEntity.ok(success(results));
     }
 
+    @PostMapping("/pay-serviceProvider-OnBoarding-fee")
+    public ResponseEntity<ApiResponse<?>> payServiceProviderOnboardingFee(@RequestBody PaymentRequest request) {
+
+         var response = paymentService.initiateCommissionPayment(request,PaymentReason.ONBOARDING_COMMISSION);
+         return ResponseEntity.ok(success(response));
+    }
+
+
+
 }

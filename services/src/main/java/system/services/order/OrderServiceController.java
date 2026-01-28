@@ -3,10 +3,7 @@ package system.services.order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import system.services.config.ApiResponse;
 import system.services.config.BaseController;
 import system.services.order.dto.AttachOrderRequest;
@@ -38,7 +35,7 @@ public class OrderServiceController extends BaseController {
         return ResponseEntity.ok(success(response));
     }
 
-    @PostMapping("/search-orders")
+    @GetMapping("/search-orders")
     public ResponseEntity<ApiResponse<?>> searchOrders(
             @RequestParam(required = false) String serviceId,
             @RequestParam(required = false) String serviceName,

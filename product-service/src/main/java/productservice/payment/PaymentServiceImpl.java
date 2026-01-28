@@ -11,6 +11,9 @@ import productservice.bookings.dto.CustomerAddress;
 import productservice.bookings.dto.PaymentRequest;
 import productservice.bookings.dto.SubmitRequest;
 import productservice.externalApIs.PesaPalConfigurations;
+import productservice.feignclients.service.AvailableStatus;
+import productservice.feignclients.service.ServiceClient;
+import productservice.feignclients.service.ServiceProviderResponse;
 import productservice.payment.dto.InitiatePaymentResponse;
 import productservice.pesapal.PesaPal;
 import productservice.feignclients.authentication.AuthenticationClient;
@@ -41,9 +44,17 @@ public class PaymentServiceImpl implements PaymentService {
     private final PesaPal pesaPal;
     private final PesaPalConfigurations configurations;
     private final AuthenticationClient authenticationClient;
+    private final ServiceClient serviceClient;
 
     @Value("${bookings.visit-fee}")
     private Float visitFee;
+
+    @Value("${country.code}")
+    private String countryCode;
+
+    @Value("${bookings.service-provider-onboarding-fee}")
+    private String serviceProviderFee;
+
 
     @Override
     public InitiatePaymentResponse initiatePayment(PaymentRequest request, PaymentReason paymentReason) {
@@ -123,9 +134,65 @@ public class PaymentServiceImpl implements PaymentService {
         switch (payment.getPaymentReason()) {
             case VISIT -> confirmVisitPayment(payment);
             case BOOKING -> confirmBookingPayment(payment);
+            case ONBOARDING_COMMISSION -> confirmOnboardingFeePayment(payment);
         }
 
         return "Payment recorded successfully";
+    }
+
+    /**
+     *
+     */
+    @Override
+    public InitiatePaymentResponse initiateCommissionPayment(PaymentRequest request, PaymentReason reason) {
+
+        log.warn("Receiving payment {}", request);
+
+        if (reason != PaymentReason.ONBOARDING_COMMISSION) {
+            throw new RuntimeException("Invalid Payment reason");
+        }
+        ServiceProviderResponse provider = serviceClient.getProviderById(request.serviceProviderId());
+
+        if (provider == null) {
+            throw new RuntimeException("provider not found for this id");
+        }
+        String referenceId = UUID.randomUUID().toString();
+        PaymentConfirmation payment = PaymentConfirmation.builder()
+                .orderTrackingId(provider.orderTrackingId())
+                .referenceId(referenceId)
+                .status(PaymentStatus.INITIATED)
+                .paymentTime(LocalDateTime.now())
+                .paymentReason(reason)
+                .build();
+        paymentRepository.save(payment);
+
+        CustomerAddress address = CustomerAddress.builder()
+                .phoneNumber(provider.phoneNumber())
+                .emailAddress(provider.email())
+                .countryCode(countryCode)
+                .firstName(provider.name())
+                .middleName(provider.name())
+                .lastName(provider.name())
+                .city(provider.location())
+                .state(provider.location())
+                .build();
+
+        SubmitRequest submitRequest = SubmitRequest.builder()
+                .id(provider.orderTrackingId())
+                .currency(configurations.getCurrency())
+                .amount(BigDecimal.valueOf(Long.parseLong(serviceProviderFee)).setScale(2, RoundingMode.HALF_UP).floatValue())
+                .description("service fee payment")
+                .referenceId(referenceId)
+                .paymentReason(reason.toString())
+                .redirectMode(configurations.getRedirectMode())
+                .callbackUrl(configurations.getCallbackUrl())
+                .cancellationUrl(configurations.getCancellationUrl())
+                .notificationId(configurations.getNotificationId())
+                .billingAddress(address)
+                .build();
+        log.info("Submitting request to PesaPal: {} with amount {}", submitRequest, request.amount());
+        return pesaPal.submitOrderRequest(submitRequest);
+
     }
 
     private void confirmVisitPayment(PaymentConfirmation payment) {
@@ -139,18 +206,28 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void confirmBookingPayment(PaymentConfirmation payment) {
-       BookRoom bookRoom = bookRoomRepository.findByOrderTrackingId(payment.getOrderTrackingId())
-               .orElseThrow(() -> new RuntimeException("room not found for this id"));
+        BookRoom bookRoom = bookRoomRepository.findByOrderTrackingId(payment.getOrderTrackingId())
+                .orElseThrow(() -> new RuntimeException("room not found for this id"));
 
-       Room room = roomRepository.findById(bookRoom.getRoom().getId())
-                       .orElseThrow(()-> new RuntimeException("booked room not found"));
+        Room room = roomRepository.findById(bookRoom.getRoom().getId())
+                .orElseThrow(() -> new RuntimeException("booked room not found"));
 
-       room.setBookingStatus(BookingStatus.BOOKED);
-       roomRepository.save(room);
-       bookRoom.setBookingStatus(BookingStatus.BOOKED);
-       bookRoomRepository.save(bookRoom);
-       payment.setBookRoom(bookRoom);
-       paymentRepository.save(payment);
+        room.setBookingStatus(BookingStatus.BOOKED);
+        roomRepository.save(room);
+        bookRoom.setBookingStatus(BookingStatus.BOOKED);
+        bookRoomRepository.save(bookRoom);
+        payment.setBookRoom(bookRoom);
+        paymentRepository.save(payment);
+    }
+
+    private void confirmOnboardingFeePayment(PaymentConfirmation payment) {
+
+        ServiceProviderResponse provider = serviceClient.getProviderByOrderTrackingId(payment.getOrderTrackingId());
+
+        if (provider == null) {
+            throw new RuntimeException("Provider not found for this orderTrackingId");
+        }
+        serviceClient.updateServiceProviderStatus(provider.id(), AvailableStatus.AVAILABLE);
     }
 
     private Float resolveAmount(PaymentReason paymentReason, PaymentRequest request) {

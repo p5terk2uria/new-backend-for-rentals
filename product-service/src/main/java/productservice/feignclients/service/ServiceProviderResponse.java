@@ -1,13 +1,8 @@
-package system.services.serviceproviders.dto;
-
-import lombok.Builder;
-import system.services.serviceproviders.enums.AvailableStatus;
+package productservice.feignclients.service;
 
 import java.math.BigDecimal;
 
-@Builder(toBuilder = true)
-public record ServiceProviderResponse (
-
+public record ServiceProviderResponse(
         String id,
 
         String name,

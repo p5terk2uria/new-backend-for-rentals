@@ -17,4 +17,8 @@ public interface ServiceProviderService {
     String placeBid(PlaceBidRequest request);
 
     void updateServiceProvideAvailability (String serviceProvideId, AvailableStatus availableStatus);
+
+    ServiceProviderResponse findServiceProviderById(String providerId);
+
+    ServiceProviderResponse findServiceProviderByOrderTrackingId(String orderTrackingId);
 }
