@@ -11,9 +11,7 @@ import productservice.bookings.dto.CustomerAddress;
 import productservice.bookings.dto.PaymentRequest;
 import productservice.bookings.dto.SubmitRequest;
 import productservice.externalApIs.PesaPalConfigurations;
-import productservice.feignclients.service.AvailableStatus;
-import productservice.feignclients.service.ServiceClient;
-import productservice.feignclients.service.ServiceProviderResponse;
+import productservice.feignclients.service.*;
 import productservice.payment.dto.InitiatePaymentResponse;
 import productservice.pesapal.PesaPal;
 import productservice.feignclients.authentication.AuthenticationClient;
@@ -55,14 +53,13 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${bookings.service-provider-onboarding-fee}")
     private String serviceProviderFee;
 
+    String referenceId = UUID.randomUUID().toString();
 
     @Override
     public InitiatePaymentResponse initiatePayment(PaymentRequest request, PaymentReason paymentReason) {
 
         RequestVisit visit = visitRepository.findById(request.visitId())
                 .orElseThrow(() -> new RuntimeException("Request not found for this id: " + request.visitId()));
-
-        String referenceId = UUID.randomUUID().toString();
 
         PaymentConfirmation payment = PaymentConfirmation.builder()
                 .orderTrackingId(visit.getOrderTrackingId())
@@ -135,14 +132,12 @@ public class PaymentServiceImpl implements PaymentService {
             case VISIT -> confirmVisitPayment(payment);
             case BOOKING -> confirmBookingPayment(payment);
             case ONBOARDING_COMMISSION -> confirmOnboardingFeePayment(payment);
+            case SERVICE_PAYMENT -> confirmServicePayment(payment.getOrderTrackingId());
         }
 
         return "Payment recorded successfully";
     }
 
-    /**
-     *
-     */
     @Override
     public InitiatePaymentResponse initiateCommissionPayment(PaymentRequest request, PaymentReason reason) {
 
@@ -195,6 +190,63 @@ public class PaymentServiceImpl implements PaymentService {
 
     }
 
+    @Override
+    public InitiatePaymentResponse initiateOrderPayment(PaymentRequest request, PaymentReason reason) {
+
+        if (reason != PaymentReason.SERVICE_PAYMENT)
+            throw new RuntimeException("Invalid payment Reason");
+
+        UserData user = authenticationClient.getUserById(request.userId());
+
+        if (user == null) {
+            throw new RuntimeException("user not found with this id");
+        }
+
+        AdminOrderResponse order = serviceClient.getOrderByOrderTrackingId(request.orderId());
+
+        if (order == null) {
+            throw new RuntimeException("Order not found with this id");
+        }
+
+        PaymentConfirmation payment = PaymentConfirmation.builder()
+                .orderTrackingId(request.orderId())
+                .referenceId(referenceId)
+                .status(PaymentStatus.INITIATED)
+                .paymentTime(LocalDateTime.now())
+                .paymentReason(reason)
+                .build();
+        paymentRepository.save(payment);
+
+        CustomerAddress address = CustomerAddress.builder()
+                .phoneNumber(user.phoneNumber())
+                .emailAddress(user.emailAddress())
+                .countryCode(countryCode)
+                .firstName(user.firstName())
+                .middleName(user.emailAddress())
+                .lastName(user.lastName())
+                .city(user.city())
+                .state(user.state())
+                .build();
+
+        SubmitRequest submitRequest = SubmitRequest.builder()
+                .id(order.orderTrackingId())
+                .currency(configurations.getCurrency())
+                .amount(BigDecimal.valueOf(Long.parseLong(serviceProviderFee)).setScale(2, RoundingMode.HALF_UP).floatValue())
+                .description("service fee payment")
+                .referenceId(referenceId)
+                .paymentReason(reason.toString())
+                .redirectMode(configurations.getRedirectMode())
+                .callbackUrl(configurations.getCallbackUrl())
+                .cancellationUrl(configurations.getCancellationUrl())
+                .notificationId(configurations.getNotificationId())
+                .billingAddress(address)
+                .build();
+
+        log.info("Submitting request to PesaPal: {} with amount {}", submitRequest, request.amount());
+        return pesaPal.submitOrderRequest(submitRequest);
+
+    }
+
     private void confirmVisitPayment(PaymentConfirmation payment) {
         RequestVisit visit = visitRepository.findByOrderTrackingId(payment.getMerchantReference())
                 .orElseThrow(() -> new RuntimeException("Visit not found"));
@@ -235,5 +287,16 @@ public class PaymentServiceImpl implements PaymentService {
             return visitFee;
         }
         return request.amount();
+    }
+
+    private void confirmServicePayment(String orderTrackingId) {
+
+        AdminOrderResponse order = serviceClient.getOrderByOrderTrackingId(orderTrackingId);
+
+        if (order == null) {
+            throw new RuntimeException("Order not found for this orderTrackingId");
+        }
+        serviceClient.updateOrderPaymentStatus(order.orderTrackingId(), OrderPaymentStatus.PAID);
+
     }
 }

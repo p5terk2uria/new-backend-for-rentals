@@ -23,6 +23,9 @@ public record PropertyRequest(
         String ownerEmail,
 
         @NotBlank(message = "The searchProperty location must be disclosed")
+        String propertyAddress,
+
+        @NotBlank(message = "The searchProperty location must be disclosed")
         String propertyLocation,
 
         @NotBlank(message = "HouseDescription type must be specified")

@@ -2,6 +2,8 @@ package system.services.mapper;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import system.services.bidorder.ServiceBidSearchResponse;
+import system.services.bidorder.ServiceOrderBid;
 import system.services.order.ServiceOrder;
 import system.services.order.dto.AdminOrderResponse;
 import system.services.order.dto.OrderServiceResponse;
@@ -29,6 +31,7 @@ public class OrderServiceMapper {
                 .budget(request.budget())
                 .description(request.description())
                 .orderStatus(OrderStatus.ACTIVE)
+                .location(request.location())
                 .build();
     }
 
@@ -40,7 +43,7 @@ public class OrderServiceMapper {
                 serviceOrder.getServiceProviderId(),
                 serviceOrder.getDateRequested(),
                 serviceOrder.getExpectedDeadline(),
-                serviceOrder.getOrderId(),
+                serviceOrder.getOrderTrackingId(),
                 null,
                 serviceOrder.getDescription(),
                 serviceOrder.getOrderStatus()
@@ -70,12 +73,16 @@ public class OrderServiceMapper {
 
         return OrderServiceResponse.builder()
                 .id(serviceOrder.getId())
-                .orderId(serviceOrder.getOrderId())
+                .orderTrackingId(serviceOrder.getOrderTrackingId())
+                .dateRequested(serviceOrder.getDateRequested().toString())
+                .expectedDeadline(serviceOrder.getExpectedDeadline().toString())
                 .orderStatus(serviceOrder.getOrderStatus())
                 .serviceName(serviceOrder.getServiceName())
                 .serviceProviderId(serviceOrder.getServiceProviderId())
                 .userId(serviceOrder.getUserId())
                 .description(serviceOrder.getDescription())
+                .location(serviceOrder.getLocation())
+                .orderPaymentStatus(serviceOrder.getPaymentStatus())
                 .budget(deductedBudget)
                 .build();
     }
@@ -84,7 +91,7 @@ public class OrderServiceMapper {
 
         return AdminOrderResponse.builder()
                 .id(serviceOrder.getId())
-                .orderId(serviceOrder.getOrderId())
+                .orderTrackingId(serviceOrder.getOrderTrackingId())
                 .orderStatus(serviceOrder.getOrderStatus())
                 .serviceName(serviceOrder.getServiceName())
                 .serviceProviderId(serviceOrder.getServiceProviderId())
@@ -94,5 +101,16 @@ public class OrderServiceMapper {
                 .build();
 
 
+    }
+
+    public ServiceBidSearchResponse toBidSearchResponse (ServiceOrderBid serviceOrderBid) {
+
+        return ServiceBidSearchResponse.builder()
+                .id(serviceOrderBid.getId())
+                .orderId(serviceOrderBid.getOrderId())
+                .message(serviceOrderBid.getMessage())
+                .bidStatus(serviceOrderBid.getStatus())
+                .bidedAt(serviceOrderBid.getCreatedAt())
+                .build();
     }
 }

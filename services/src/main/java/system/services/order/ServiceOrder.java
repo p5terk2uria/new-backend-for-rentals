@@ -2,6 +2,7 @@ package system.services.order;
 
 import jakarta.persistence.*;
 import lombok.*;
+import system.services.order.enums.OrderPaymentStatus;
 import system.services.order.enums.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,11 +26,13 @@ public class ServiceOrder {
 
     private String serviceProviderId;
 
-    private LocalDate dateRequested;
+    private LocalDate dateRequested = LocalDate.now();
 
     private LocalDate expectedDeadline;
 
-    private String orderId;
+    private String orderTrackingId;
+
+    private String location;
 
     private BigDecimal budget;
 
@@ -37,4 +40,8 @@ public class ServiceOrder {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    @Enumerated(EnumType.STRING)
+    private OrderPaymentStatus paymentStatus;
+
 }

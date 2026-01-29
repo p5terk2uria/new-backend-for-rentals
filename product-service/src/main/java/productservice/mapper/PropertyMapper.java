@@ -22,6 +22,7 @@ public class PropertyMapper {
                 .ownerName(request.ownerName())
                 .ownerEmail(request.ownerEmail())
                 .propertyName(request.propertyName())
+                .propertyAddress(request.propertyAddress())
                 .propertyLocation(request.propertyLocation())
                 .houseDescription(request.houseDescription())
                 .build();

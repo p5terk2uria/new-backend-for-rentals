@@ -3,7 +3,6 @@ package system.services.services;
 
 import jakarta.persistence.*;
 import lombok.*;
-import system.services.services.dto.AttendanceStatus;
 
 @Entity
 @AllArgsConstructor

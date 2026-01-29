@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import system.services.bidorder.BidStatus;
-import system.services.bidorder.PlaceBidRequest;
-import system.services.bidorder.ServiceOrderBid;
-import system.services.bidorder.ServiceOrderBidRepository;
+import system.services.bidorder.*;
 import system.services.feignclients.authentication.AuthenticationClient;
 import system.services.feignclients.authentication.UserData;
 import system.services.mapper.OrderServiceMapper;
@@ -18,6 +15,7 @@ import system.services.serviceproviders.dto.ServiceProviderRequest;
 import system.services.serviceproviders.dto.ServiceProviderResponse;
 import system.services.services.PropertyServiceRepository;
 import system.services.services.Services;
+import system.services.specifications.ServiceBidSpecification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -117,13 +115,21 @@ public class ServiceProvidersServiceImpl implements ServiceProviderService {
         ServiceOrderBid bid = new ServiceOrderBid();
         bid.setOrderId(request.orderId());
         bid.setServiceProviderId(request.serviceProviderId());
-        bid.setBidAmount(request.amount());
         bid.setMessage(request.message());
         bid.setStatus(BidStatus.PENDING);
         bid.setCreatedAt(LocalDate.now());
         bidRepository.save(bid);
         return bid.getId();
 
+    }
+
+    @Override
+    public Page<ServiceBidSearchResponse> searchBids(ServiceBidSearchRequest request, Pageable pageable) {
+
+        var spec = ServiceBidSpecification.search(request);
+
+        return bidRepository.findAll(spec,pageable)
+                .map(orderServiceMapper::toBidSearchResponse);
 
     }
 
@@ -159,5 +165,7 @@ public class ServiceProvidersServiceImpl implements ServiceProviderService {
         return orderServiceMapper.toServiceProviderResponse(serviceProvider);
 
     }
+
+
 
 }

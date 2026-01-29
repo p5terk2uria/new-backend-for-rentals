@@ -15,4 +15,5 @@ public interface PaymentService {
 
     InitiatePaymentResponse initiateCommissionPayment (PaymentRequest request, PaymentReason reason);
 
+    InitiatePaymentResponse initiateOrderPayment(PaymentRequest request, PaymentReason reason);
 }

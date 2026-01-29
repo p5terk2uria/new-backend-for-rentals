@@ -1,9 +1,11 @@
-package system.services;
+package system.services.specifications;
 
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import system.services.order.ServiceOrder;
 import system.services.order.dto.OrderSearchRequest;
+import system.services.order.enums.OrderStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,9 @@ public class ServiceOrderSpecification {
                         ), "%" + request.serviceName().toLowerCase() + "%"
                 ));
             }
+            predicates.add(criteriaBuilder.notEqual(root.get("orderStatus"),
+                    OrderStatus.PENDING
+            ));
 
             if (request.status() != null) {
                 predicates.add(criteriaBuilder.equal(
@@ -45,7 +50,7 @@ public class ServiceOrderSpecification {
             }
             if (request.minBudget() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(
-                        root.get("budget"), request.maxBudget()
+                        root.get("budget"), request.minBudget()
                 ));
             }
             if (request.maxBudget() != null) {

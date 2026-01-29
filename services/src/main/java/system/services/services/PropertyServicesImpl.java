@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PropertyServiceImpl implements PropertyService {
+public class PropertyServicesImpl implements PropertyServices {
 
     private final PropertyServiceRepository serviceRepository;
 

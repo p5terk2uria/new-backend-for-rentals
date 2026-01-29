@@ -4,5 +4,6 @@ public enum PaymentReason {
     VISIT,
     BOOKING,
     ONBOARDING_COMMISSION,
-    SERVICE_PAYMENT
+    SERVICE_PAYMENT,
+    RENT_PAYMENT
 }

@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import system.services.bidorder.BidStatus;
 import system.services.bidorder.PlaceBidRequest;
+import system.services.bidorder.ServiceBidSearchRequest;
 import system.services.config.ApiResponse;
 import system.services.config.BaseController;
 import system.services.serviceproviders.dto.ServiceProviderResponse;
@@ -52,6 +54,25 @@ public class ServiceProviderController extends BaseController {
         var response  = provideService.placeBid(request);
         return ResponseEntity.ok(success(response));
     }
+
+    @GetMapping("/search-bids")
+    public ResponseEntity<ApiResponse<?>> searchBids (
+            @RequestParam (required = false) String orderId,
+            @RequestParam (required = false) String serviceProviderId,
+            @RequestParam (required = false) BidStatus  bidStatus,
+            Pageable pageable) {
+
+        ServiceBidSearchRequest request = ServiceBidSearchRequest.builder()
+                .orderId(orderId)
+                .serviceProviderId(serviceProviderId)
+                .status(bidStatus)
+                .build();
+
+        return ResponseEntity.ok(success(provideService.searchBids(request,pageable)));
+
+
+    }
+
 
     @GetMapping("/get-service-provider-by-id")
     public ServiceProviderResponse getServiceProviderById(@RequestParam String id) {

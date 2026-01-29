@@ -25,6 +25,8 @@ public class Property {
 
     private String propertyLocation;
 
+    private String propertyAddress;
+
     private String houseDescription;
 
     private int noOfRooms;

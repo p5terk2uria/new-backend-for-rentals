@@ -22,8 +22,6 @@ public class ServiceOrderBid {
 
     private String serviceProviderId;
 
-    private BigDecimal bidAmount;
-
     private String message;
 
     @Enumerated(EnumType.STRING)

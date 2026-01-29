@@ -13,6 +13,8 @@ public record PaymentRequest(
 
         String visitId,
 
+        String orderId,
+
         String bookRoomId,
 
         String currency,

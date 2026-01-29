@@ -46,18 +46,21 @@ public class PaymentController extends BaseController {
 
         log.info("Processed callback into object: {}", response);
 
-        var results = paymentService.recordRequestVisitCallBack(response);
-
-        return ResponseEntity.ok(success(results));
+        return ResponseEntity.ok(success(paymentService.recordRequestVisitCallBack(response)));
     }
 
     @PostMapping("/pay-serviceProvider-OnBoarding-fee")
     public ResponseEntity<ApiResponse<?>> payServiceProviderOnboardingFee(@RequestBody PaymentRequest request) {
 
-         var response = paymentService.initiateCommissionPayment(request,PaymentReason.ONBOARDING_COMMISSION);
-         return ResponseEntity.ok(success(response));
+        return ResponseEntity.ok(success(paymentService
+                .initiateCommissionPayment(request, PaymentReason.ONBOARDING_COMMISSION)));
     }
 
+    @PostMapping("/pay-service-fee")
+    public ResponseEntity<ApiResponse<?>> payServicePaymentFee(@RequestBody PaymentRequest request) {
+        return ResponseEntity.ok(success(paymentService
+                .initiateOrderPayment(request, PaymentReason.SERVICE_PAYMENT)));
+    }
 
 
 }

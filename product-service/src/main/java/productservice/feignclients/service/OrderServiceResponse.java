@@ -1,12 +1,10 @@
-package system.services.order.dto;
+package productservice.feignclients.service;
 
 import lombok.Builder;
-import system.services.order.enums.OrderPaymentStatus;
-import system.services.order.enums.OrderStatus;
 import java.math.BigDecimal;
 
 @Builder(toBuilder = true)
-public record OrderServiceResponse (
+public record OrderServiceResponse(
 
         String id,
 
@@ -20,7 +18,7 @@ public record OrderServiceResponse (
 
         String expectedDeadline,
 
-        String orderTrackingId,
+        String orderId,
 
         BigDecimal budget,
 
@@ -28,9 +26,7 @@ public record OrderServiceResponse (
 
         String location,
 
-        OrderStatus orderStatus,
-
-        OrderPaymentStatus orderPaymentStatus
+        OrderStatus orderStatus
 
 
 ) {

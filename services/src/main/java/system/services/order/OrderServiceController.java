@@ -6,9 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import system.services.config.ApiResponse;
 import system.services.config.BaseController;
-import system.services.order.dto.AttachOrderRequest;
-import system.services.order.dto.OrderSearchRequest;
-import system.services.order.dto.RequestServiceRequest;
+import system.services.order.dto.*;
+import system.services.order.enums.OrderPaymentStatus;
 import system.services.order.enums.OrderStatus;
 
 import java.math.BigDecimal;
@@ -22,14 +21,14 @@ public class OrderServiceController extends BaseController {
     private final OrderService orderService;
 
     @PostMapping("/service")
-    public ResponseEntity<ApiResponse<?>> orderService(RequestServiceRequest request) {
+    public ResponseEntity<ApiResponse<?>> requestService(@RequestBody RequestServiceRequest request) {
 
-        String response = orderService.requestService(request);
-        return ResponseEntity.ok(success("success", response));
+        orderService.requestService(request);
+        return ResponseEntity.ok(success("success"));
     }
 
     @PostMapping("/attach-order-to-service-provider")
-    public ResponseEntity<ApiResponse<?>> attachOrderToServiceProvider(AttachOrderRequest request) {
+    public ResponseEntity<ApiResponse<?>> attachOrderToServiceProvider(@RequestBody AttachOrderRequest request) {
 
         String response = orderService.attachOrderToServiceProvider(request);
         return ResponseEntity.ok(success(response));
@@ -53,5 +52,24 @@ public class OrderServiceController extends BaseController {
 
         var responses = orderService.searchOrderService(request, pageable);
         return ResponseEntity.ok(success(responses));
+    }
+
+    @GetMapping("/find-by-order-trackingId")
+    public ResponseEntity<AdminOrderResponse> getOrderByOrderTrackingId(@RequestParam String orderId) {
+
+        var response = orderService.getServiceOrderByOrderTrackingId(orderId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/update-order-payment-status")
+    public void updateOrderPaymentStatus(@RequestParam String orderId, @RequestParam OrderPaymentStatus paymentStatus) {
+        orderService.updateOrderPaymentStatus(orderId, paymentStatus);
+    }
+
+    @GetMapping("/find-all-orders")
+    public ResponseEntity<ApiResponse<?>> getAllOrders(Pageable pageable) {
+
+        var orders = orderService.getAllOrders(pageable);
+        return ResponseEntity.ok(success(orders));
     }
 }

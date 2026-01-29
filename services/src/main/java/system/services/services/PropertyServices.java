@@ -6,7 +6,7 @@ import system.services.services.dto.ServiceResponse;
 import java.util.List;
 
 
-public interface PropertyService {
+public interface PropertyServices {
 
     void  createService (ServiceRequest request);
 

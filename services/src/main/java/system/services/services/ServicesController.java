@@ -12,7 +12,7 @@ import system.services.services.dto.ServiceRequest;
 @RequestMapping("api/services")
 public class ServicesController extends BaseController {
 
-    private final PropertyService propertyServices;
+    private final PropertyServices propertyServices;
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<?>> createService(
