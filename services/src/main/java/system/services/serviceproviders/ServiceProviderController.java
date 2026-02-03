@@ -24,8 +24,8 @@ public class ServiceProviderController extends BaseController {
     public ResponseEntity<ApiResponse<?>> createServiceProvider(
             @RequestBody ServiceProviderRequest request
     ) {
-        provideService.addServiceProvider(request);
-        return ResponseEntity.ok(success("service provider onboarded successfully"));
+       String response =  provideService.addServiceProvider(request);
+        return ResponseEntity.ok(success("service provider onboarded successfully",response));
     }
 
     @GetMapping("/get-providers-by-service")

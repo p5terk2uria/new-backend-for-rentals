@@ -23,6 +23,10 @@ public class ServiceOrderSpecification {
                 predicates.add(criteriaBuilder.equal(
                         root.get("serviceId"), request.serviceId()
                 ));
+            if (request.userId() != null)
+                predicates.add(criteriaBuilder.equal(
+                        root.get("userId"), request.userId()
+                ));
 
             if (request.serviceName() != null && !request.serviceName().isBlank()) {
                 predicates.add(criteriaBuilder.like(

@@ -12,7 +12,7 @@ import system.services.serviceproviders.dto.ServiceProviderResponse;
 
 public interface ServiceProviderService {
 
-    void addServiceProvider(ServiceProviderRequest request);
+    String addServiceProvider(ServiceProviderRequest request);
 
     Page<ServiceProviderResponse> getAllServiceProvidersByService(String service, Pageable pageable);
 

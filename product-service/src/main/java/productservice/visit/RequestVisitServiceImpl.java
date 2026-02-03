@@ -16,6 +16,8 @@ import productservice.visit.dto.RequestVisitSearchRequest;
 import productservice.visit.dto.VisitRequest;
 import productservice.visit.dto.VisitResponse;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -26,6 +28,16 @@ public class RequestVisitServiceImpl implements RequestVisitService {
     private final PaymentService paymentService;
     private final RoomRepository roomRepository;
     private final VisitRequestMapper mapper;
+
+    private static Map<RequestVisit.RequestStatus, Set<RequestVisit.RequestStatus>> VALID_TRANSITIONS = Map.of(
+            RequestVisit.RequestStatus.NOT_CONFIRMED,
+            Set.of(RequestVisit.RequestStatus.PENDING),
+
+            RequestVisit.RequestStatus.PENDING,
+            Set.of(RequestVisit.RequestStatus.VISITED,
+                    RequestVisit.RequestStatus.CANCELLED)
+    );
+
 
     @Override
     public VisitResponse requestVisit(VisitRequest request) {
@@ -50,38 +62,19 @@ public class RequestVisitServiceImpl implements RequestVisitService {
     }
 
     @Override
-    public void updateVisitStatus(String userId, String visitId, RequestVisit.RequestStatus currentStatus,
+    public void updateVisitStatus(String userId, String visitId,
                                   RequestVisit.RequestStatus desiredStatus) {
 
         RequestVisit visit = visitRepository.findById(visitId)
                 .orElseThrow(() -> new IllegalArgumentException("no visit entity found for this id %s" + visitId));
 
-        switch (currentStatus) {
+        RequestVisit.RequestStatus current = visit.getStatus();
 
-            case NOT_CONFIRMED -> {
-                if (desiredStatus != RequestVisit.RequestStatus.PENDING) {
-                    throw new IllegalArgumentException(
-                            "Invalid status change: cannot go from NOT_CONFIRMED to " + desiredStatus
-                    );
+        if (!VALID_TRANSITIONS.getOrDefault(current, Set.of())
+                .contains(desiredStatus)) {
 
-                }
-            }
-            case PENDING -> {
-                if (desiredStatus != RequestVisit.RequestStatus.VISITED) {
-                    throw new IllegalArgumentException(
-                            "Invalid status change: cannot go from PENDING to " + desiredStatus
-
-                    );
-                }
-            }
-            case VISITED -> {
-                throw new IllegalStateException(
-                        "Invalid status change: VISITED is the final status, cannot change further."
-                );
-            }
-            default -> throw new IllegalStateException(
-                    "Unknown current status: " + currentStatus
-            );
+            throw new IllegalStateException(
+                    "Invalid transition from " + current + " to " + desiredStatus);
         }
         visit.setStatus(desiredStatus);
         visitRepository.save(visit);

@@ -40,7 +40,7 @@ public class ServiceProvidersServiceImpl implements ServiceProviderService {
      *
      */
     @Override
-    public void addServiceProvider(ServiceProviderRequest request) {
+    public String addServiceProvider(ServiceProviderRequest request) {
 
         UserData userData = authenticationClient.getUserById(request.userId());
 
@@ -69,7 +69,8 @@ public class ServiceProvidersServiceImpl implements ServiceProviderService {
                 .orderTrackingId(orderTrackingId)
                 .build();
 
-        providerRepository.save(provider);
+       return providerRepository.save(provider).getId();
+
     }
 
     /**

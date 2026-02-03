@@ -15,7 +15,10 @@ import system.services.serviceproviders.ServiceProviderRepository;
 import system.services.serviceproviders.enums.AvailableStatus;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +28,14 @@ public class OrderServiceImpl implements OrderService {
     private final OrderServiceRepository orderServiceRepository;
     private final ServiceProviderRepository serviceProviderRepository;
 
+    private static final Map<OrderStatus, Set<OrderStatus>> VALID_TRANSITIONS =
+            Map.of(OrderStatus.IN_PROGRESS, Set.of(OrderStatus.EXECUTED, OrderStatus.CANCELLED),
+                    OrderStatus.ACTIVE, Set.of(OrderStatus.IN_PROGRESS, OrderStatus.EXPIRED, OrderStatus.CANCELLED),
+                    OrderStatus.PENDING, Set.of(OrderStatus.ACTIVE, OrderStatus.EXPIRED, OrderStatus.CANCELLED)
+            );
+
     @Override
-    public void requestService(RequestServiceRequest request) {
+    public String requestService(RequestServiceRequest request) {
 
         String orderId = "ORDER" + System.currentTimeMillis();
 
@@ -40,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
         }
         serviceOrder.setOrderStatus(OrderStatus.ACTIVE);
         orderServiceRepository.save(serviceOrder);
+        return orderServiceRepository.save(serviceOrder).getOrderTrackingId();
     }
 
 
@@ -115,6 +125,17 @@ public class OrderServiceImpl implements OrderService {
         orderServiceRepository.save(order);
         throw new RuntimeException("Illegal payment status passed");
 
+    }
+
+    @Override
+    public void updateOrderStatus(String orderId, OrderStatus desiredStatus) {
+
+        ServiceOrder order = orderServiceRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("no order found for this id"));
+
+        if(!VALID_TRANSITIONS.getOrDefault(order.getOrderStatus(), Collections.emptySet()).contains(desiredStatus)) {
+            throw new RuntimeException("Invalid order status status transition");
+        }
     }
 
 

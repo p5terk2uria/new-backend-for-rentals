@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import authentication_service.user.config.ApiResponse;
+import authentication_service.user.config.BaseController;
 import authentication_service.user.dto.*;
 import authentication_service.user.enums.DomainRoles;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -17,15 +19,14 @@ import org.springframework.http.ResponseEntity;
 @RequestMapping("/authentication")
 @RequiredArgsConstructor
 @Tag(name = "User Management Controller")
-public class UserManagementController {
+public class UserManagementController extends BaseController {
 
     private final UserManagementService userManagementService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request) {
-        userManagementService.registerUser(request);
+    public ResponseEntity <ApiResponse<?>> registerUser(@RequestBody RegisterRequest request) {
         String response = userManagementService.registerUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.ok(success(response));
     }
 
 

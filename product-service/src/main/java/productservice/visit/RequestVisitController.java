@@ -56,11 +56,10 @@ public class RequestVisitController extends BaseController {
     public ResponseEntity<ApiResponse<?>> updateVisitStatus(
             @RequestParam String userId,
             @RequestParam String visitId,
-            @RequestParam RequestVisit.RequestStatus currentStatus,
             @RequestParam RequestVisit.RequestStatus desiredStatus
     ) {
 
-        requestVisitService.updateVisitStatus(userId, visitId, currentStatus, desiredStatus);
+        requestVisitService.updateVisitStatus(userId, visitId, desiredStatus);
         return ResponseEntity.ok(success("status updated successfully"));
     }
 

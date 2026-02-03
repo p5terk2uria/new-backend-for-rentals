@@ -6,6 +6,8 @@ import productservice.bookings.dto.BookingStatus;
 import productservice.property.entities.Property;
 import productservice.property.entities.RoomBills;
 import productservice.property.enums.HouseType;
+
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Entity
@@ -41,4 +43,5 @@ public class Room {
 
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;
+
 }

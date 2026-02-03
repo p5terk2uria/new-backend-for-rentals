@@ -15,7 +15,7 @@ public interface RequestVisitService {
 
     VisitResponse requestVisit(VisitRequest request);
 
-    void updateVisitStatus(String userId,String visitId, RequestVisit.RequestStatus currentStatus,
+    void updateVisitStatus(String userId,String visitId,
                            RequestVisit.RequestStatus desiredStatus);
 
     InitiatePaymentResponse initiatePayment (PaymentRequest request, PaymentReason paymentReason);

@@ -6,6 +6,8 @@ import java.time.LocalDate;
 
 public record OrderSearchRequest (
 
+        String userId,
+
         String serviceId,
 
         String serviceName,

@@ -78,7 +78,7 @@ public class PaymentServiceImpl implements PaymentService {
         CustomerAddress address = CustomerAddress.builder()
                 .phoneNumber(user.phoneNumber())
                 .emailAddress(user.emailAddress())
-                .countryCode(user.countryCode())
+                .countryCode("KE")
                 .firstName(user.firstName())
                 .middleName(user.middleName())
                 .lastName(user.lastName())

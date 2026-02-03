@@ -23,8 +23,7 @@ public class OrderServiceController extends BaseController {
     @PostMapping("/service")
     public ResponseEntity<ApiResponse<?>> requestService(@RequestBody RequestServiceRequest request) {
 
-        orderService.requestService(request);
-        return ResponseEntity.ok(success("success"));
+        return ResponseEntity.ok(success( orderService.requestService(request)));
     }
 
     @PostMapping("/attach-order-to-service-provider")
@@ -36,6 +35,7 @@ public class OrderServiceController extends BaseController {
 
     @GetMapping("/search-orders")
     public ResponseEntity<ApiResponse<?>> searchOrders(
+            @RequestParam (required = false) String userId,
             @RequestParam(required = false) String serviceId,
             @RequestParam(required = false) String serviceName,
             @RequestParam(required = false) OrderStatus status,
@@ -46,7 +46,7 @@ public class OrderServiceController extends BaseController {
             Pageable pageable
     ) {
 
-        OrderSearchRequest request = new OrderSearchRequest(serviceId, serviceName,
+        OrderSearchRequest request = new OrderSearchRequest(userId, serviceId, serviceName,
                 status, minBudget, maxBudget, fromDate, toDate
         );
 
@@ -55,9 +55,9 @@ public class OrderServiceController extends BaseController {
     }
 
     @GetMapping("/find-by-order-trackingId")
-    public ResponseEntity<AdminOrderResponse> getOrderByOrderTrackingId(@RequestParam String orderId) {
-
-        var response = orderService.getServiceOrderByOrderTrackingId(orderId);
+    public ResponseEntity<AdminOrderResponse> getOrderByOrderTrackingId(
+            @RequestParam("orderTrackingId") String orderTrackingId) {
+        var response = orderService.getServiceOrderByOrderTrackingId(orderTrackingId);
         return ResponseEntity.ok(response);
     }
 
@@ -71,5 +71,12 @@ public class OrderServiceController extends BaseController {
 
         var orders = orderService.getAllOrders(pageable);
         return ResponseEntity.ok(success(orders));
+    }
+
+    @PutMapping("/update-order-status")
+    public ResponseEntity<ApiResponse<?>> updateOrderStatus(@RequestParam String orderId, @RequestParam OrderStatus orderStatus) {
+
+        orderService.updateOrderStatus(orderId, orderStatus);
+        return ResponseEntity.ok(success("Status updated successfully"));
     }
 }
