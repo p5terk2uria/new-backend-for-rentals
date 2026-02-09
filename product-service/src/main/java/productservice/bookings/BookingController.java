@@ -82,6 +82,12 @@ public class BookingController extends BaseController {
         return new ApiResponse<>(true, "Fetched bookings", responsePage);
     }
 
+    @PostMapping("/update-booking-status")
+    public ResponseEntity<ApiResponse<?>> updateBookingStatus(String bookRoomId, BookingStatus desiredStatus){
+        bookingService.updateBookingStatus(bookRoomId,desiredStatus);
+        return ResponseEntity.ok(success(null));
+    }
+
 
 
 }

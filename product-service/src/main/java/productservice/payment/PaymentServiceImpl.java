@@ -264,9 +264,9 @@ public class PaymentServiceImpl implements PaymentService {
         Room room = roomRepository.findById(bookRoom.getRoom().getId())
                 .orElseThrow(() -> new RuntimeException("booked room not found"));
 
-        room.setBookingStatus(BookingStatus.BOOKED);
+        room.setBookingStatus(BookingStatus.PENDING);
         roomRepository.save(room);
-        bookRoom.setBookingStatus(BookingStatus.BOOKED);
+        bookRoom.setBookingStatus(BookingStatus.PENDING);
         bookRoomRepository.save(bookRoom);
         payment.setBookRoom(bookRoom);
         paymentRepository.save(payment);

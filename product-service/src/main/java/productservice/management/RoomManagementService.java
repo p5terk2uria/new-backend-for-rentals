@@ -7,6 +7,8 @@ import productservice.management.dto.FilteredRequest;
 import productservice.management.dto.RoomTenantResponse;
 import productservice.room.PaymentStatus;
 
+import java.math.BigDecimal;
+
 public interface RoomManagementService {
 
     void assignTenantToRoom(AssignTenantToRoomRequest request);
@@ -15,7 +17,7 @@ public interface RoomManagementService {
 
     Page<RoomTenantResponse> getFilteredRooms(FilteredRequest request, Pageable pageable);
 
-    void generateRoomBills(String roomId);
+    //BigDecimal generateRoomBills(String roomId);
 
     void payRoomBills(String roomId, String tenantId);
 

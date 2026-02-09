@@ -11,11 +11,14 @@ import productservice.management.dto.AssignTenantToRoomRequest;
 import productservice.management.dto.FilteredRequest;
 import productservice.management.dto.RoomTenantResponse;
 import productservice.payment.dto.DomainRoles;
+import productservice.property.entities.RoomBills;
+import productservice.property.repository.BillsRepository;
 import productservice.room.PaymentStatus;
 import productservice.room.Room;
 import productservice.room.RoomRepository;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class RoomManagementServiceImpl implements RoomManagementService {
     private final AuthenticationClient authenticationClient;
     private final RoomRepository roomRepository;
     private final RoomTenantRepository roomTenantRepository;
+    private final BillsRepository billsRepository;
 
     @Transactional
     @Override
@@ -86,10 +90,29 @@ public class RoomManagementServiceImpl implements RoomManagementService {
     }
 
 
-    @Override
-    public void generateRoomBills(String roomId) {
+//    @Override
+//    public BigDecimal generateRoomBills(String roomId) {
+//
+//        Room room = roomRepository.findById(roomId)
+//                .orElseThrow(() -> new RuntimeException("Room not found for this id"));
+//
+//        BigDecimal houseBill = Optional.ofNullable(room.getHouseBill())
+//                .orElse(BigDecimal.ZERO);
+//
+//        RoomBills otherBills = billsRepository.findRoomBillsByRoomId(roomId)
+//                .orElse(RoomBills.builder()
+//                        .maintenanceBill(BigDecimal.ZERO)
+//                        .trashBill(BigDecimal.ZERO)
+//                        .houseBill(BigDecimal.ZERO)
+//                        .build());
+//
+//        BigDecimal total = houseBill
+//                .add(Optional.ofNullable(otherBills.getMaintenanceBill()).orElse(BigDecimal.ZERO))
+//                .add(Optional.ofNullable(otherBills.getTrashBill()).orElse(BigDecimal.ZERO));
+//
+//        return total;
+//    }
 
-    }
 
 
     @Override

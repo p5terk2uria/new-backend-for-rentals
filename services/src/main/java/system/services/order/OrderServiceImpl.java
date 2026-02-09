@@ -136,6 +136,9 @@ public class OrderServiceImpl implements OrderService {
         if(!VALID_TRANSITIONS.getOrDefault(order.getOrderStatus(), Collections.emptySet()).contains(desiredStatus)) {
             throw new RuntimeException("Invalid order status status transition");
         }
+
+        order.setOrderStatus(desiredStatus);
+        orderServiceRepository.save(order);
     }
 
 

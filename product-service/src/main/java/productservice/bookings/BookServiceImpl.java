@@ -23,6 +23,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -37,6 +40,13 @@ public class BookServiceImpl implements BookingService {
     private final PesaPal pesaPal;
     private final PaymentRepository paymentRepository;
     private final PesaPalConfigurations configurations;
+
+    private static final Map<BookingStatus, Set<BookingStatus>> VALID_TRANSITIONS =
+            Map.of(
+                    BookingStatus.UNBOOKED, Set.of(BookingStatus.PENDING),
+                    BookingStatus.PENDING, Set.of(BookingStatus.BOOKED, BookingStatus.CANCELLED)
+            );
+
 
     /**
      *
@@ -185,6 +195,25 @@ public class BookServiceImpl implements BookingService {
                         .bookingDate(bookRoom.getBookingDate())
                         .bookingStatus(bookRoom.getBookingStatus())
                         .build());
+    }
+
+    @Override
+    public void updateBookingStatus(String bookRoomId, BookingStatus desiredStatus) {
+
+        BookRoom bookRoom = bookRoomRepository.findById(bookRoomId).
+                orElseThrow(() -> new RuntimeException ("No booking order found for this id"));
+
+        Room room = roomRepository.findById(bookRoom.getRoom().getId()).
+                orElseThrow(()-> new RuntimeException("No room found with this id"));
+
+        if(!VALID_TRANSITIONS.getOrDefault(bookRoom.getBookingStatus(), Collections.emptySet()).contains(desiredStatus)) {
+            throw new RuntimeException("Invalid order status status transition");
+        }
+        bookRoom.setBookingStatus(desiredStatus);
+        bookRoomRepository.save(bookRoom);
+        room.setBookingStatus(desiredStatus);
+        roomRepository.save(room);
+
     }
 
 

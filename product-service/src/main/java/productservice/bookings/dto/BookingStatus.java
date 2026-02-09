@@ -2,5 +2,7 @@ package productservice.bookings.dto;
 
 public enum BookingStatus {
     BOOKED,
-    UNBOOKED
+    PENDING,
+    UNBOOKED,
+    CANCELLED
 }
