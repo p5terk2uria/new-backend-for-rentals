@@ -41,6 +41,8 @@ public class PesaPal {
                 HttpMethod.POST,
                 entity,
                 AuthenticationResponse.class);
+        assert response.getBody() != null;
+        log.info("RAW RESPONSE: {}", response.getBody());
 
         return response.getBody();
     }

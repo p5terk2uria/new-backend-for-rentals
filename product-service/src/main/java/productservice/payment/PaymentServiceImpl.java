@@ -12,6 +12,8 @@ import productservice.bookings.dto.PaymentRequest;
 import productservice.bookings.dto.SubmitRequest;
 import productservice.externalApIs.PesaPalConfigurations;
 import productservice.feignclients.service.*;
+import productservice.management.RoomTenant;
+import productservice.management.RoomTenantRepository;
 import productservice.payment.dto.InitiatePaymentResponse;
 import productservice.pesapal.PesaPal;
 import productservice.feignclients.authentication.AuthenticationClient;
@@ -43,6 +45,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PesaPalConfigurations configurations;
     private final AuthenticationClient authenticationClient;
     private final ServiceClient serviceClient;
+    private final RoomTenantRepository roomTenantRepository;
 
     @Value("${bookings.visit-fee}")
     private Float visitFee;
@@ -70,10 +73,10 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
         paymentRepository.save(payment);
 
-        UserData user = authenticationClient.getUserById(request.userId());
-        if (user == null) {
-            throw new RuntimeException("User not found for this Id: " + request.userId());
-        }
+            UserData user = authenticationClient.getUserById(request.userId());
+            if (user == null) {
+                throw new RuntimeException("User not found for this Id: " + request.userId());
+            }
 
         CustomerAddress address = CustomerAddress.builder()
                 .phoneNumber(user.phoneNumber())
@@ -243,6 +246,67 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
 
         log.info("Submitting request to PesaPal: {} with amount {}", submitRequest, request.amount());
+        return pesaPal.submitOrderRequest(submitRequest);
+
+    }
+
+
+    @Override
+    public InitiatePaymentResponse initiateRentPayment(PaymentRequest request, PaymentReason reason) {
+
+        if (reason != PaymentReason.RENT_PAYMENT) {
+            throw new RuntimeException("Invalid Payment reason");
+        }
+        RoomTenant roomTenant = roomTenantRepository.findRoomTenantByUserIdAndRoomId(request.userId(), request.roomId())
+                .orElseThrow(() -> new RuntimeException("Room with with user not found"));
+
+       PaymentConfirmation payment = PaymentConfirmation.builder()
+               .orderTrackingId(roomTenant.getOrderTracking())
+               .referenceId(UUID.randomUUID().toString())
+               .status(PaymentStatus.INITIATED)
+               .paymentTime(LocalDateTime.now())
+               .paymentReason(reason)
+               .build();
+       paymentRepository.save(payment);
+
+        UserData user = authenticationClient.getUserById(request.userId());
+        if (user == null) {
+            throw new RuntimeException("User not found for this Id: " + request.userId());
+        }
+
+        CustomerAddress address = CustomerAddress.builder()
+                .phoneNumber(user.phoneNumber())
+                .emailAddress(user.emailAddress())
+                .countryCode("KE")
+                .firstName(user.firstName())
+                .middleName(user.middleName())
+                .lastName(user.lastName())
+                .line1(user.line1())
+                .line2(user.line2())
+                .city(user.city())
+                .state(user.state())
+                .postalCode(user.postalCode())
+                .zipCode(user.zipCode())
+                .build();
+        Float amount = resolveAmount(reason, request);
+
+        BigDecimal formattedAmount = BigDecimal.valueOf(amount).setScale(2, RoundingMode.HALF_UP);
+
+        SubmitRequest submitRequest = SubmitRequest.builder()
+                .id(roomTenant.getOrderTracking())
+                .currency(configurations.getCurrency())
+                .amount(formattedAmount.floatValue())
+                .description(request.description())
+                .referenceId(referenceId)
+                .paymentReason(reason.toString())
+                .redirectMode(configurations.getRedirectMode())
+                .callbackUrl(configurations.getCallbackUrl())
+                .cancellationUrl(configurations.getCancellationUrl())
+                .notificationId(configurations.getNotificationId())
+                .billingAddress(address)
+                .build();
+
+        log.info("Submitting request to PesaPal: {} with amount {}", submitRequest, formattedAmount);
         return pesaPal.submitOrderRequest(submitRequest);
 
     }

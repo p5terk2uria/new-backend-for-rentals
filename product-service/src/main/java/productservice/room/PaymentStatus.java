@@ -4,5 +4,5 @@ public enum PaymentStatus {
 
     PAID,
     UNPAID,
-    HALF_PAID
+    HALF_PAID,
 }

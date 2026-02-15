@@ -34,6 +34,8 @@ public class RoomTenant {
 
     private BigDecimal balance;
 
+    private String orderTracking;
+
     private boolean active;
 
     @Enumerated(EnumType.STRING)

@@ -26,6 +26,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl  # Add this
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl  # Add this
     show-sql: true
     properties:
       hibernate:
@@ -54,7 +57,6 @@ videos:
     videos: /home/dev/files/videos/rooms
     images: /home/dev/files/images/roomspackage
 
-
 gateway:
   secret: "Gv7kR2t0eJ0mQyqB1T8Vw3C4Z9lFh2rPp8bK0sXq7Jt4Wm9eD3Fq6Yv1Nn5Rc8Zd"
 
@@ -73,8 +75,8 @@ mpesa:
   stk-url: https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
 
 pesapal:
-  consumer-key: ryJSvd0e2/rwOmXvRhb2gvpn6tWgFXgq
-  consumer-secret: /3+05mCCUvj1VQHdL7it99X7fd8=
+  consumer-key: gpHDROWWxfJCqp5jhMVSBLkltmWUDrLJ
+  consumer-secret: +seacD7TP5xyrjy1dcdcU585jM8=
   live-authentication-url: https://pay.pesapal.com/v3/api/Auth/RequestToken
   submit-request-url: https://pay.pesapal.com/v3/api/Transactions/SubmitOrderRequest
   currency: KES
@@ -86,6 +88,4 @@ pesapal:
   ipn-registration-url: https://pay.pesapal.com/v3/api/URLSetup/RegisterIPN
 
 country:
-  code : KES
-
-
+  code: KES

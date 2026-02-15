@@ -21,6 +21,8 @@ public record PaymentRequest(
 
         Float amount,
 
+        String roomId,
+
         String description
 
 ) {
