@@ -43,7 +43,6 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
-
     implementation 'de.mkammerer:argon2-jvm:2.11'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -55,12 +54,16 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-// --- Spring Boot configuration to make a fat JAR with correct main class ---
+/* REQUIRED */
 springBoot {
     mainClass = 'stock.management.AuthenticationServiceApplication'
 }
 
-// Optional: build a plain JAR for IDEs, but bootJar is what Docker will use
-tasks.named('jar') {
+/* IMPORTANT: ONLY bootJar */
+bootJar {
     enabled = true
+}
+
+jar {
+    enabled = false
 }
