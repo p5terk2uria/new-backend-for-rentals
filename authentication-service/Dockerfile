@@ -1,6 +1,8 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} app.jar
+
+# Copy the Spring Boot fat JAR explicitly
+COPY build/libs/*-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
 ENTRYPOINT ["java","-Xms128m","-Xmx384m","-jar","/app/app.jar"]
