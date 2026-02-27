@@ -54,14 +54,12 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-/* REQUIRED */
 springBoot {
-    mainClass = 'stock.management.AuthenticationServiceApplication'
+    mainClass = 'authentication_service.AuthenticationServiceApplication'
 }
 
-/* IMPORTANT: ONLY bootJar */
 bootJar {
-    enabled = true
+    archiveFileName = "app.jar"
 }
 
 jar {
