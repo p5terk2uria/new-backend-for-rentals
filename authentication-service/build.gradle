@@ -20,7 +20,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.1" // controls Spring Cloud versions
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.1"
     }
 }
 
@@ -53,4 +53,14 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// --- Spring Boot configuration to make a fat JAR with correct main class ---
+springBoot {
+    mainClass = 'stock.management.AuthenticationServiceApplication'
+}
+
+// Optional: build a plain JAR for IDEs, but bootJar is what Docker will use
+tasks.named('jar') {
+    enabled = true
 }
